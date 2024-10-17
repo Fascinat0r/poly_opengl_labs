@@ -1,12 +1,10 @@
 from OpenGL.GL import *
-from shapes.cube import Cube
+
 
 class Scene:
     def __init__(self):
         # Здесь будут храниться объекты, добавленные в сцену
         self.objects = []
-        # Добавим куб для примера
-        self.cube = Cube(position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 0.0, 0.0])
 
     def add_object(self, obj):
         """Добавляем объекты (кубы, сферы и т.д.) в сцену."""
@@ -50,8 +48,6 @@ class Scene:
         self.draw_grid()
 
         # Отрисовка объектов в сцене (например, куба)
-        self.cube.draw()        # Отрисовка куба
-        self.cube.draw_edges()  # Отрисовка рёбер куба
         for obj in self.objects:
             obj.draw()
             obj.draw_edges()

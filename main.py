@@ -5,12 +5,15 @@ from OpenGL.GLUT import *
 from camera import Camera
 from handlers import key_pressed, key_released, handle_camera_movement, mouse_movement
 from scene import Scene  # Класс сцены
+from shapes.cube import Cube
+from shapes.octahedron import Octahedron
 
 # Создаем камеру
 camera = Camera([0.0, 0.0, 5.0], [0.0, 1.0, 0.0], -90.0, 0.0)
 
 # Создаем сцену
 scene = Scene()
+
 
 def init():
     glEnable(GL_DEPTH_TEST)  # Включаем тест глубины для 3D
@@ -20,6 +23,7 @@ def init():
     glLoadIdentity()
     gluPerspective(45, 800 / 600, 0.1, 100.0)  # Настройка перспективы
     glMatrixMode(GL_MODELVIEW)
+
 
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -34,28 +38,41 @@ def display():
 
     glutSwapBuffers()
 
+
 def update(value):
     """Обновление состояния сцены."""
     handle_camera_movement(camera)
     glutPostRedisplay()
     glutTimerFunc(16, update, 0)
 
+
 def key_press_wrapper(key, x, y):
     key_pressed(key, x, y)
+
 
 def key_release_wrapper(key, x, y):
     key_released(key, x, y)
 
+
 def mouse_motion_wrapper(x, y):
     mouse_movement(x, y, camera)
+
 
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
     glutInitWindowSize(800, 600)
-    glutCreateWindow(b"3D Scene with Cube")
+    glutCreateWindow(b"3D Scene with Cube and Octahedron")
 
     init()
+
+    # Добавим куб для примера
+    cube = Cube(position=[-2.0, 0.0, 0.0], scale=1.0, color=[1.0, 0.0, 0.0])
+    scene.add_object(cube)
+
+    # Добавим октаэдр для примера
+    octahedron = Octahedron(position=[2.0, 0.0, 0.0], scale=1.0, color=[0.0, 1.0, 0.0])
+    scene.add_object(octahedron)
 
     # Скрываем курсор
     glutSetCursor(GLUT_CURSOR_NONE)
@@ -71,6 +88,7 @@ def main():
     glutTimerFunc(16, update, 0)
 
     glutMainLoop()
+
 
 if __name__ == "__main__":
     main()
