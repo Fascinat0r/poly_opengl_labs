@@ -2,24 +2,38 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from animations.looped_rotation_animation import LoopedRotationAnimation
-from app.animations.looped_movement_animation import LoopedMovementAnimation
-from app.shapes.octahedron import Octahedron
-from app.shapes.teapot import Teapot
-from app.shapes.torus import Torus
-from camera import Camera
-from handlers import create_mouse_movement_handler, key_pressed, key_released, handle_camera_movement
-from scene import Scene
+from app.animations.ligth_rotation_animation import LightRotationAnimation
+from app.camera import Camera
+from app.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
+from app.scene import Scene
+from light.point_light import PointLight
+from materials.material import Material
 from shapes.cone import Cone
+from shapes.teapot import Teapot
+from shapes.torus import Torus
 
 # Создаём камеру и сцену
 camera = Camera([0.0, 0.0, 5.0], [0.0, 1.0, 0.0], -90.0, 0.0)
 scene = Scene()
 
+# Источник света - точечный свет
+point_light = PointLight(GL_LIGHT0, position=[0.0, 5.0, 5.0, 1.0],
+                         ambient=[0.05, 0.05, 0.05, 1.0],  # Слабое фоновое освещение
+                         diffuse=[2.0, 2.0, 2.0, 2.0],  # Яркий рассеянный свет
+                         specular=[1.0, 1.0, 1.0, 1.0],  # Яркий зеркальный свет
+                         attenuation=[1.0, 0.1, 0.01])  # Затухание света
+
 
 def init():
     glEnable(GL_DEPTH_TEST)
-    glClearColor(0.0, 0.0, 0.0, 1.0)
+    glEnable(GL_LIGHTING)
+    glEnable(GL_COLOR_MATERIAL)
+
+    # Включаем первый источник света
+    point_light.apply()
+
+    # Настраиваем темную сцену
+    glClearColor(0.0, 0.0, 0.0, 1.0)  # Фоновый черный цвет
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
@@ -37,6 +51,13 @@ def display():
     # Обновляем анимации в сцене
     scene.update_animations()
 
+    # Включаем режим прозрачности
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+    # Рисуем индикатор источника света
+    point_light.draw_indicator()
+
     scene.render()
 
     glutSwapBuffers()
@@ -51,62 +72,34 @@ def update(value):
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
-    glutInitWindowSize(800, 600)
-    glutCreateWindow(b"3D Scene with Animation")
+    glutInitWindowSize(1024, 720)  # Устанавливаем размер окна
+    glutCreateWindow(b"Dark Scene with Point Light")
 
     init()
 
     # Создаем объекты
-    octahedron = Octahedron(position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 0.0, 0.0])
-    scene.add_object(octahedron)
+    # Полированный тор
+    polished_torus = Torus(position=[2.0, 0.0, 0.0], scale=1.0, color=[0.5, 0.5, 0.5],
+                           material=Material(specular=[1.0, 1.0, 1.0, 1.0], shininess=128))
 
-    cone = Cone(base_radius=1.0, height=2.0, slices=30, position=[2.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 0.0])
-    scene.add_object(cone)
+    # Прозрачный чайник
+    transparent_teapot = Teapot(position=[-2.0, 0.0, 0.0], scale=1.0, color=[0.0, 1.0, 1.0],
+                                material=Material(diffuse=[0.0, 1.0, 1.0, 0.6], transparency=0.6))
 
-    teapot = Teapot(position=[-2.0, 0.0, 0.0], scale=1.0, color=[0.0, 1.0, 1.0])
-    scene.add_object(teapot)
+    # Матовый конус
+    matte_cone = Cone(base_radius=1.0, height=2.0, position=[0.0, 0.0, 0.0], scale=1.0,
+                      material=Material(diffuse=[0.8, 0.8, 0.0, 1.0], shininess=10))
 
-    tor = Torus(position=[-2.0, 0.0, -4.0], scale=1.0, color=[1.0, 0.0, 1.0])
-    scene.add_object(tor)
+    scene.add_object(polished_torus)
+    scene.add_object(transparent_teapot)
+    scene.add_object(matte_cone)
 
-    # Создаем анимации и добавляем их в сцену
-    cone_rotation_animation = LoopedRotationAnimation(
-        target_object=cone,
-        start_angles=[0.0, 0.0, 0.0],
-        end_angles=[0.0, 0.0, -60.0],
-        speeds=[0.0, 0.0, 20]
-    )
-    cone_rotation_animation.start()
-    scene.add_animation(cone_rotation_animation)
+    # Создаем анимацию вращения источника света
+    light_rotation_animation = LightRotationAnimation(point_light, radius=5.0, speed=30.0)
+    light_rotation_animation.start()
 
-    oct_rotation_animation = LoopedRotationAnimation(
-        target_object=octahedron,
-        start_angles=[0.0, 0.0, 0.0],
-        end_angles=[90.0, 0.0, 0.0],
-        speeds=[20, 0.0, 0.0]
-    )
-    oct_rotation_animation.start()
-    scene.add_animation(oct_rotation_animation)
-
-    # Анимации перемещения
-    teapot_movement_animation = LoopedMovementAnimation(
-        target_object=teapot,
-        start_position=[-2.0, 0.0, 0.0],
-        end_position=[-2.0, 0.0, -2.0],
-        speeds=[0.0, 0.0, 1]
-    )
-    teapot_movement_animation.start()
-    scene.add_animation(teapot_movement_animation)
-
-    # Анимации перемещения тора, центр тора должен совпасть с центром чайника
-    tor_movement_animation = LoopedMovementAnimation(
-        target_object=tor,
-        start_position=[-2.0, 0.0, -4.0],
-        end_position=[-2.0, 0.0, -2.0],
-        speeds=[0.0, 0.0, 1.0]
-    )
-    tor_movement_animation.start()
-    scene.add_animation(tor_movement_animation)
+    # Добавляем анимацию в сцену
+    scene.add_animation(light_rotation_animation)
 
     # Скрываем курсор и фиксируем мышь в центре окна
     glutSetCursor(GLUT_CURSOR_NONE)

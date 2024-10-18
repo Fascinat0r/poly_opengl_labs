@@ -7,8 +7,8 @@ from app.shapes.shape import Shape
 
 class Cone(Shape):
     def __init__(self, base_radius=1.0, height=2.0, slices=30, position=[0.0, 0.0, 0.0], scale=1.0,
-                 color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0]):
-        super().__init__(position, scale, color, rotation)
+                 color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0], material=None, texture=None):
+        super().__init__(position, scale, color, rotation, material, texture)
         self.base_radius = base_radius  # Радиус основания конуса
         self.height = height  # Высота конуса
         self.slices = slices  # Количество сегментов по окружности

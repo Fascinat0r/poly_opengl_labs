@@ -6,8 +6,8 @@ from app.shapes.shape import Shape
 
 class Teapot(Shape):
     def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0], wireframe=False,
-                 rotation=[0.0, 0.0, 0.0]):
-        super().__init__(position, scale, color, rotation)
+                 rotation=[0.0, 0.0, 0.0], material=None, texture=None):
+        super().__init__(position, scale, color, rotation, material, texture)
         self.wireframe = wireframe  # Режим каркасной модели
 
     def draw(self):

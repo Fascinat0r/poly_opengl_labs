@@ -4,8 +4,8 @@ from app.shapes.shape import Shape
 
 
 class Cube(Shape):
-    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0]):
-        super().__init__(position, scale, color, rotation)
+    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0], material=None, texture=None):
+        super().__init__(position, scale, color, rotation, material, texture)
 
     def draw(self):
         """Отрисовка куба с заданным цветом и масштабом."""
