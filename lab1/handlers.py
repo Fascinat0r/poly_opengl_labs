@@ -5,7 +5,9 @@ keys = {
     'w': False,
     'a': False,
     's': False,
-    'd': False
+    'd': False,
+    'c': False,   # Для спуска вниз
+    ' ': False    # Для подъёма вверх (пробел)
 }
 
 # Начальные значения для мыши
@@ -25,8 +27,13 @@ def key_pressed(key, x, y):
         keys['s'] = True
     if key == b'd':
         keys['d'] = True
+    if key == b'c':
+        keys['c'] = True  # Спуск камеры
+    if key == b' ':  # Пробел
+        keys[' '] = True  # Подъём камеры
 
 
+# Обработка отпусканий клавиш
 def key_released(key, x, y):
     """Обработка отпусканий клавиш."""
     global keys
@@ -38,8 +45,13 @@ def key_released(key, x, y):
         keys['s'] = False
     if key == b'd':
         keys['d'] = False
+    if key == b'c':
+        keys['c'] = False  # Остановка спуска
+    if key == b' ':  # Пробел
+        keys[' '] = False  # Остановка подъёма
 
 
+# Обработка движения камеры
 def handle_camera_movement(camera):
     """Движение камеры на основе нажатых клавиш."""
     if keys['w']:
@@ -50,8 +62,13 @@ def handle_camera_movement(camera):
         camera.move_left()
     if keys['d']:
         camera.move_right()
+    if keys['c']:
+        camera.move_down()  # Спуск камеры вниз
+    if keys[' ']:
+        camera.move_up()  # Подъём камеры вверх
 
 
+# Создание обработчика движения мыши
 def create_mouse_movement_handler(camera):
     """Создаём замыкание для обработки движения мыши с использованием камеры."""
     last_x, last_y = 400, 300

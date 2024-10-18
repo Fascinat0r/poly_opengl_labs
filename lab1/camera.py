@@ -39,6 +39,14 @@ class Camera:
         self.position[1] += self.right[1] * self.speed
         self.position[2] += self.right[2] * self.speed
 
+    def move_up(self):
+        """Поднимает камеру вверх."""
+        self.position[1] += self.speed
+
+    def move_down(self):
+        """Опускает камеру вниз."""
+        self.position[1] -= self.speed
+
     def rotate(self, x_offset, y_offset):
         """Вращает камеру при движении мыши."""
         self.yaw += x_offset * self.sensitivity
