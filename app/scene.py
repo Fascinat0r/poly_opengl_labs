@@ -1,4 +1,5 @@
 from OpenGL.GL import *
+from OpenGL.GLUT import *
 
 
 class Scene:
@@ -7,6 +8,8 @@ class Scene:
         self.objects = []
         # Список анимаций, привязанных к объектам сцены
         self.animations = []
+        # Время последней отрисовки сцены
+        self.last_update_time = glutGet(GLUT_ELAPSED_TIME)
 
     def add_object(self, obj):
         """Добавляем объекты (кубы, конусы и т.д.) в сцену."""
@@ -58,6 +61,11 @@ class Scene:
             obj.render()
 
     def update_animations(self):
-        """Обновляем анимации объектов сцены."""
+        """Обновление всех анимаций с учетом времени."""
+        current_time = glutGet(GLUT_ELAPSED_TIME)
+        delta_time = (current_time - self.last_update_time) / 1000.0
+        self.last_update_time = current_time
+
+        # Обновляем каждую анимацию, передавая delta_time
         for animation in self.animations:
-            animation.update(animation.target_object)  # Обновляем анимацию для каждого объекта
+            animation.update(animation.target_object, delta_time)

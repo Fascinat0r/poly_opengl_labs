@@ -20,6 +20,27 @@ class Shape(ABC):
         """Отрисовка рёбер фигуры."""
         pass
 
+    def draw_center_axes(self, axis_length=0.2):
+        """Отрисовка осей координат в центре объекта."""
+        glBegin(GL_LINES)
+
+        # Ось X (красный)
+        glColor3f(1.0, 0.0, 0.0)  # Красный цвет для оси X
+        glVertex3f(0.0, 0.0, 0.0)
+        glVertex3f(axis_length, 0.0, 0.0)
+
+        # Ось Y (зелёный)
+        glColor3f(0.0, 1.0, 0.0)  # Зелёный цвет для оси Y
+        glVertex3f(0.0, 0.0, 0.0)
+        glVertex3f(0.0, axis_length, 0.0)
+
+        # Ось Z (синий)
+        glColor3f(0.0, 0.0, 1.0)  # Синий цвет для оси Z
+        glVertex3f(0.0, 0.0, 0.0)
+        glVertex3f(0.0, 0.0, axis_length)
+
+        glEnd()
+
     def render(self):
         """Отрисовка фигуры с применением всех трансформаций."""
         glPushMatrix()
@@ -32,10 +53,13 @@ class Shape(ABC):
         glRotatef(self.rotation[1], 0.0, 1.0, 0.0)  # Вращение вокруг оси Y
         glRotatef(self.rotation[2], 0.0, 0.0, 1.0)  # Вращение вокруг оси Z
 
-        # 3. Применяем масштабирование, если необходимо
+        # 3. Отрисовка осей координат в центре объекта
+        self.draw_center_axes()
+
+        # 4. Применяем масштабирование, если необходимо
         glScalef(self.scale, self.scale, self.scale)
 
-        # 4. Отрисовываем объект
+        # 5. Отрисовываем объект
         self.draw()
         self.draw_edges()
 

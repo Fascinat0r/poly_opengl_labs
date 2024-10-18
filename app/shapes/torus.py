@@ -17,8 +17,8 @@ class Torus(Shape):
     def draw(self):
         """Отрисовка тора с заданным цветом."""
         glPushMatrix()
-        glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
 
+        glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
         self.draw_surface()
 
         glPopMatrix()
@@ -26,8 +26,8 @@ class Torus(Shape):
     def draw_edges(self):
         """Отрисовка каркасных рёбер тора."""
         glPushMatrix()
-        glColor3f(0.0, 0.0, 0.0)  # Цвет рёбер — чёрный
 
+        glColor3f(0.0, 0.0, 0.0)  # Цвет рёбер — чёрный
         self.draw_wireframe()
 
         glPopMatrix()
@@ -44,7 +44,7 @@ class Torus(Shape):
         glEnd()
 
     def draw_wireframe(self):
-        """Рисуем каркас тора (линии по ребрам)."""
+        """Рисуем каркас тора (линии по рёбрам)."""
         glBegin(GL_LINES)
         for i in range(self.rings):
             for j in range(self.sides):

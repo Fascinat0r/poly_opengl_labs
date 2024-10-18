@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 
+
 class Animation(ABC):
     def __init__(self, target_object):
-        self.running = False  # Переменная, указывающая на то, запущена ли анимация
+        self.running = False  # Указывает, запущена ли анимация
         self.target_object = target_object  # Объект, к которому привязана анимация
 
     @abstractmethod
@@ -11,7 +12,6 @@ class Animation(ABC):
         pass
 
     @abstractmethod
-    def update(self, shape):
-        """Обновление состояния анимации."""
+    def update(self, shape, delta_time):
+        """Обновление состояния анимации с учетом delta_time."""
         pass
-

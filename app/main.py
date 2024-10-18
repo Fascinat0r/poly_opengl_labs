@@ -3,7 +3,10 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 from animations.looped_rotation_animation import LoopedRotationAnimation
+from app.animations.looped_movement_animation import LoopedMovementAnimation
 from app.shapes.octahedron import Octahedron
+from app.shapes.teapot import Teapot
+from app.shapes.torus import Torus
 from camera import Camera
 from handlers import create_mouse_movement_handler, key_pressed, key_released, handle_camera_movement
 from scene import Scene
@@ -60,12 +63,18 @@ def main():
     cone = Cone(base_radius=1.0, height=2.0, slices=30, position=[2.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 0.0])
     scene.add_object(cone)
 
+    teapot = Teapot(position=[-2.0, 0.0, 0.0], scale=1.0, color=[0.0, 1.0, 1.0])
+    scene.add_object(teapot)
+
+    tor = Torus(position=[-2.0, 0.0, -4.0], scale=1.0, color=[1.0, 0.0, 1.0])
+    scene.add_object(tor)
+
     # Создаем анимации и добавляем их в сцену
     cone_rotation_animation = LoopedRotationAnimation(
         target_object=cone,
         start_angles=[0.0, 0.0, 0.0],
         end_angles=[0.0, 0.0, -60.0],
-        speeds=[0.0, 0.0, 0.05]
+        speeds=[0.0, 0.0, 20]
     )
     cone_rotation_animation.start()
     scene.add_animation(cone_rotation_animation)
@@ -74,10 +83,30 @@ def main():
         target_object=octahedron,
         start_angles=[0.0, 0.0, 0.0],
         end_angles=[90.0, 0.0, 0.0],
-        speeds=[0.05, 0.0, 0.0]
+        speeds=[20, 0.0, 0.0]
     )
     oct_rotation_animation.start()
     scene.add_animation(oct_rotation_animation)
+
+    # Анимации перемещения
+    teapot_movement_animation = LoopedMovementAnimation(
+        target_object=teapot,
+        start_position=[-2.0, 0.0, 0.0],
+        end_position=[-2.0, 0.0, -2.0],
+        speeds=[0.0, 0.0, 1]
+    )
+    teapot_movement_animation.start()
+    scene.add_animation(teapot_movement_animation)
+
+    # Анимации перемещения тора, центр тора должен совпасть с центром чайника
+    tor_movement_animation = LoopedMovementAnimation(
+        target_object=tor,
+        start_position=[-2.0, 0.0, -4.0],
+        end_position=[-2.0, 0.0, -2.0],
+        speeds=[0.0, 0.0, 1.0]
+    )
+    tor_movement_animation.start()
+    scene.add_animation(tor_movement_animation)
 
     # Скрываем курсор и фиксируем мышь в центре окна
     glutSetCursor(GLUT_CURSOR_NONE)

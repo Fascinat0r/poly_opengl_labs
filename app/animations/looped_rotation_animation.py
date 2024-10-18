@@ -16,14 +16,13 @@ class LoopedRotationAnimation(Animation):
         # Направления изменения углов, всегда определяются начальным и конечным углом
         self.directions = [1 if end > start else -1 for start, end in zip(start_angles, end_angles)]
 
-        # Стадия анимации: True - движемся вперед (к end_angles), False - движемся назад (к start_angles)
-        self.moving_forward = True
+        self.moving_back = False
 
     def start(self):
         """Запуск анимации."""
         self.running = True
 
-    def update(self, shape):
+    def update(self, shape, delta_time):
         """Обновление углов вращения объекта."""
         if not self.running:
             return
@@ -31,31 +30,35 @@ class LoopedRotationAnimation(Animation):
         # Обновляем углы вращения по каждой оси
         for i in range(3):
             # Определяем направление вращения на основе стадии анимации
-            direction = self.directions[i] if self.moving_forward else -self.directions[i]
+            direction = self.directions[i] if self.moving_back else -self.directions[i]
 
             # Обновляем текущие углы с учетом направления
-            self.current_angles[i] += direction * self.speeds[i]
+            self.current_angles[i] += direction * abs(self.speeds[i] * delta_time)
 
             # Проверка на достижение конечного угла с учетом направления вращения
-            if self.moving_forward:  # Движемся вперед (к конечным углам)
+            if self.moving_back:
                 if (self.directions[i] == 1 and self.current_angles[i] >= self.end_angles[i]) or \
                         (self.directions[i] == -1 and self.current_angles[i] <= self.end_angles[i]):
                     self.current_angles[i] = self.end_angles[i]
-            else:  # Движемся назад (к начальным углам)
+            else:
                 if (self.directions[i] == 1 and self.current_angles[i] <= self.start_angles[i]) or \
                         (self.directions[i] == -1 and self.current_angles[i] >= self.start_angles[i]):
                     self.current_angles[i] = self.start_angles[i]
 
         # Если зацикливание анимации включено, проверяем и изменяем стадию анимации
         if self.oscillate:
-            if self.moving_forward and all(
+            if self.moving_back and all(
                     abs(self.current_angles[i] - self.end_angles[i]) <= self.tolerance for i in range(3)):
                 # Если достигли конечных углов, начинаем двигаться назад
-                self.moving_forward = False
-            elif not self.moving_forward and all(
+                self.moving_back = False
+            elif not self.moving_back and all(
                     abs(self.current_angles[i] - self.start_angles[i]) <= self.tolerance for i in range(3)):
                 # Если вернулись к начальным углам, начинаем двигаться вперед
-                self.moving_forward = True
+                self.moving_back = True
 
         # Применяем текущие углы вращения к объекту
         shape.rotation = list(self.current_angles)
+
+    def stop(self):
+        """Остановка анимации."""
+        self.running = False
