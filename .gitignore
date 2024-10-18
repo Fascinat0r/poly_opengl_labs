@@ -2,3 +2,4 @@ pyopengl
 /venv/
 **/*.pyc
 **/__pycache__/
+/pyopengl/

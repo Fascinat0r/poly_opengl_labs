@@ -2,13 +2,13 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from app.animations.ligth_rotation_animation import LightRotationAnimation
-from app.camera import Camera
-from app.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
-from app.materials.textures import Texture
-from app.scene import Scene
-from app.shapes.TexturedCube import TexturedCube
-from app.shapes.cube import Cube
+from lab2.animations.ligth_rotation_animation import LightRotationAnimation
+from lab2.camera import Camera
+from lab2.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
+from lab2.materials.textures import Texture
+from lab2.scene import Scene
+from lab2.shapes.TexturedCube import TexturedCube
+from lab2.shapes.cube import Cube
 from light.point_light import PointLight
 from materials.material import Material
 from shapes.teapot import Teapot
@@ -115,7 +115,7 @@ def main():
     scene.add_object(room)
 
     # Загружаем текстуру
-    texture = Texture("data/textures/wool.jpg")
+    texture = Texture("../data/textures/wool.jpg")
     texture.load()
 
     # Создаем текстурированный объект (например, куб)

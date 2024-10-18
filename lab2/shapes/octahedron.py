@@ -1,6 +1,6 @@
 from OpenGL.GL import *
 
-from app.shapes.shape import Shape
+from lab2.shapes.shape import Shape
 
 
 class Octahedron(Shape):

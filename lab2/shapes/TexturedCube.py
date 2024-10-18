@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 
-from app.shapes.shape import Shape
+from lab2.shapes.shape import Shape
 
 
 class TexturedCube(Shape):
