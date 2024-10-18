@@ -1,11 +1,11 @@
 from OpenGL.GL import *
 
-from shapes.shape import Shape
+from app.shapes.shape import Shape
 
 
 class Octahedron(Shape):
-    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0]):
-        super().__init__(position, scale, color)
+    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0]):
+        super().__init__(position, scale, color, rotation)
 
     def draw(self):
         """Отрисовка октаэдра с заданным цветом."""

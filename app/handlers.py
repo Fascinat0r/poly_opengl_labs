@@ -1,8 +1,6 @@
-from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
 from OpenGL.GLUT import *
 
+# Используем глобальный словарь для отслеживания нажатых клавиш
 keys = {
     'w': False,
     'a': False,
@@ -15,10 +13,10 @@ last_x, last_y = 400, 300
 first_mouse = True
 
 
+# Обработка нажатий клавиш
 def key_pressed(key, x, y):
     """Обработка нажатий клавиш."""
     global keys
-    print(f"Key pressed: {key}")
     if key == b'w':
         keys['w'] = True
     if key == b'a':
@@ -32,7 +30,6 @@ def key_pressed(key, x, y):
 def key_released(key, x, y):
     """Обработка отпусканий клавиш."""
     global keys
-    print(f"Key released: {key}")
     if key == b'w':
         keys['w'] = False
     if key == b'a':
@@ -55,23 +52,28 @@ def handle_camera_movement(camera):
         camera.move_right()
 
 
-def mouse_movement(x, y, camera):
-    """Обработка движения мыши."""
-    global last_x, last_y, first_mouse
+def create_mouse_movement_handler(camera):
+    """Создаём замыкание для обработки движения мыши с использованием камеры."""
+    last_x, last_y = 400, 300
+    first_mouse = True
 
-    # Центр окна
-    center_x, center_y = 400, 300
+    def mouse_movement(x, y):
+        nonlocal last_x, last_y, first_mouse
 
-    if first_mouse:
-        last_x, last_y = x, y
-        first_mouse = False
+        center_x, center_y = 400, 300
 
-    x_offset = x - last_x
-    y_offset = last_y - y  # Инвертируем Y
+        if first_mouse:
+            last_x, last_y = x, y
+            first_mouse = False
 
-    last_x, last_y = center_x, center_y  # Перемещаем указатель мыши в центр
+        x_offset = x - last_x
+        y_offset = last_y - y  # Инвертируем Y
 
-    camera.rotate(x_offset, y_offset)
+        last_x, last_y = center_x, center_y  # Перемещаем указатель мыши в центр
 
-    # Возвращаем указатель мыши в центр окна
-    glutWarpPointer(center_x, center_y)
+        camera.rotate(x_offset, y_offset)
+
+        # Возвращаем указатель мыши в центр окна
+        glutWarpPointer(center_x, center_y)
+
+    return mouse_movement

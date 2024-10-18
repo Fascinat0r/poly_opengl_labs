@@ -3,12 +3,18 @@ from OpenGL.GL import *
 
 class Scene:
     def __init__(self):
-        # Здесь будут храниться объекты, добавленные в сцену
+        # Список объектов в сцене
         self.objects = []
+        # Список анимаций, привязанных к объектам сцены
+        self.animations = []
 
     def add_object(self, obj):
-        """Добавляем объекты (кубы, сферы и т.д.) в сцену."""
+        """Добавляем объекты (кубы, конусы и т.д.) в сцену."""
         self.objects.append(obj)
+
+    def add_animation(self, animation):
+        """Добавляем анимацию в сцену."""
+        self.animations.append(animation)
 
     def draw_axes(self):
         """Отрисовка осей координат."""
@@ -49,5 +55,9 @@ class Scene:
 
         # Отрисовка объектов в сцене (например, куба)
         for obj in self.objects:
-            obj.draw()
-            obj.draw_edges()
+            obj.render()
+
+    def update_animations(self):
+        """Обновляем анимации объектов сцены."""
+        for animation in self.animations:
+            animation.update(animation.target_object)  # Обновляем анимацию для каждого объекта
