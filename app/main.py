@@ -152,8 +152,8 @@ def main():
     # Устанавливаем обработчики
     glutDisplayFunc(display)
     glutIdleFunc(display)
-    glutKeyboardFunc(key_pressed)
-    glutKeyboardUpFunc(key_released)
+    glutKeyboardFunc(key_pressed)  # Обычные клавиши
+    glutKeyboardUpFunc(key_released)  # Отпускание обычных клавиш
     glutPassiveMotionFunc(create_mouse_movement_handler(camera))
 
     glutTimerFunc(16, update, 0)
