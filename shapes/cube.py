@@ -16,41 +16,42 @@ class Cube(Shape):
 
         glBegin(GL_QUADS)
 
+        # Вершины куба с центром в (0, 0, 0)
         # Передняя грань
-        glVertex3f(-1.0, -1.0, 1.0)
-        glVertex3f(1.0, -1.0, 1.0)
-        glVertex3f(1.0, 1.0, 1.0)
-        glVertex3f(-1.0, 1.0, 1.0)
+        glVertex3f(-0.5, -0.5, 0.5)
+        glVertex3f(0.5, -0.5, 0.5)
+        glVertex3f(0.5, 0.5, 0.5)
+        glVertex3f(-0.5, 0.5, 0.5)
 
         # Задняя грань
-        glVertex3f(-1.0, -1.0, -1.0)
-        glVertex3f(-1.0, 1.0, -1.0)
-        glVertex3f(1.0, 1.0, -1.0)
-        glVertex3f(1.0, -1.0, -1.0)
+        glVertex3f(-0.5, -0.5, -0.5)
+        glVertex3f(-0.5, 0.5, -0.5)
+        glVertex3f(0.5, 0.5, -0.5)
+        glVertex3f(0.5, -0.5, -0.5)
 
         # Левая грань
-        glVertex3f(-1.0, -1.0, -1.0)
-        glVertex3f(-1.0, -1.0, 1.0)
-        glVertex3f(-1.0, 1.0, 1.0)
-        glVertex3f(-1.0, 1.0, -1.0)
+        glVertex3f(-0.5, -0.5, -0.5)
+        glVertex3f(-0.5, -0.5, 0.5)
+        glVertex3f(-0.5, 0.5, 0.5)
+        glVertex3f(-0.5, 0.5, -0.5)
 
         # Правая грань
-        glVertex3f(1.0, -1.0, -1.0)
-        glVertex3f(1.0, 1.0, -1.0)
-        glVertex3f(1.0, 1.0, 1.0)
-        glVertex3f(1.0, -1.0, 1.0)
+        glVertex3f(0.5, -0.5, -0.5)
+        glVertex3f(0.5, 0.5, -0.5)
+        glVertex3f(0.5, 0.5, 0.5)
+        glVertex3f(0.5, -0.5, 0.5)
 
         # Верхняя грань
-        glVertex3f(-1.0, 1.0, -1.0)
-        glVertex3f(-1.0, 1.0, 1.0)
-        glVertex3f(1.0, 1.0, 1.0)
-        glVertex3f(1.0, 1.0, -1.0)
+        glVertex3f(-0.5, 0.5, -0.5)
+        glVertex3f(-0.5, 0.5, 0.5)
+        glVertex3f(0.5, 0.5, 0.5)
+        glVertex3f(0.5, 0.5, -0.5)
 
         # Нижняя грань
-        glVertex3f(-1.0, -1.0, -1.0)
-        glVertex3f(1.0, -1.0, -1.0)
-        glVertex3f(1.0, -1.0, 1.0)
-        glVertex3f(-1.0, -1.0, 1.0)
+        glVertex3f(-0.5, -0.5, -0.5)
+        glVertex3f(0.5, -0.5, -0.5)
+        glVertex3f(0.5, -0.5, 0.5)
+        glVertex3f(-0.5, -0.5, 0.5)
 
         glEnd()
         glPopMatrix()  # Восстанавливаем матрицу
@@ -64,45 +65,45 @@ class Cube(Shape):
 
         glBegin(GL_LINES)
 
-        # Ребра куба
+        # Ребра куба с центром в (0, 0, 0)
         # Передняя грань
-        glVertex3f(-1.0, -1.0, 1.0)
-        glVertex3f(1.0, -1.0, 1.0)
+        glVertex3f(-0.5, -0.5, 0.5)
+        glVertex3f(0.5, -0.5, 0.5)
 
-        glVertex3f(1.0, -1.0, 1.0)
-        glVertex3f(1.0, 1.0, 1.0)
+        glVertex3f(0.5, -0.5, 0.5)
+        glVertex3f(0.5, 0.5, 0.5)
 
-        glVertex3f(1.0, 1.0, 1.0)
-        glVertex3f(-1.0, 1.0, 1.0)
+        glVertex3f(0.5, 0.5, 0.5)
+        glVertex3f(-0.5, 0.5, 0.5)
 
-        glVertex3f(-1.0, 1.0, 1.0)
-        glVertex3f(-1.0, -1.0, 1.0)
+        glVertex3f(-0.5, 0.5, 0.5)
+        glVertex3f(-0.5, -0.5, 0.5)
 
         # Задняя грань
-        glVertex3f(-1.0, -1.0, -1.0)
-        glVertex3f(1.0, -1.0, -1.0)
+        glVertex3f(-0.5, -0.5, -0.5)
+        glVertex3f(0.5, -0.5, -0.5)
 
-        glVertex3f(1.0, -1.0, -1.0)
-        glVertex3f(1.0, 1.0, -1.0)
+        glVertex3f(0.5, -0.5, -0.5)
+        glVertex3f(0.5, 0.5, -0.5)
 
-        glVertex3f(1.0, 1.0, -1.0)
-        glVertex3f(-1.0, 1.0, -1.0)
+        glVertex3f(0.5, 0.5, -0.5)
+        glVertex3f(-0.5, 0.5, -0.5)
 
-        glVertex3f(-1.0, 1.0, -1.0)
-        glVertex3f(-1.0, -1.0, -1.0)
+        glVertex3f(-0.5, 0.5, -0.5)
+        glVertex3f(-0.5, -0.5, -0.5)
 
         # Соединения передней и задней граней
-        glVertex3f(-1.0, -1.0, 1.0)
-        glVertex3f(-1.0, -1.0, -1.0)
+        glVertex3f(-0.5, -0.5, 0.5)
+        glVertex3f(-0.5, -0.5, -0.5)
 
-        glVertex3f(1.0, -1.0, 1.0)
-        glVertex3f(1.0, -1.0, -1.0)
+        glVertex3f(0.5, -0.5, 0.5)
+        glVertex3f(0.5, -0.5, -0.5)
 
-        glVertex3f(1.0, 1.0, 1.0)
-        glVertex3f(1.0, 1.0, -1.0)
+        glVertex3f(0.5, 0.5, 0.5)
+        glVertex3f(0.5, 0.5, -0.5)
 
-        glVertex3f(-1.0, 1.0, 1.0)
-        glVertex3f(-1.0, 1.0, -1.0)
+        glVertex3f(-0.5, 0.5, 0.5)
+        glVertex3f(-0.5, 0.5, -0.5)
 
         glEnd()
         glPopMatrix()
