@@ -5,12 +5,13 @@ from OpenGL.GLUT import *
 from app.animations.ligth_rotation_animation import LightRotationAnimation
 from app.camera import Camera
 from app.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
+from app.materials.textures import Texture
 from app.scene import Scene
+from app.shapes.TexturedCube import TexturedCube
+from app.shapes.cube import Cube
 from light.point_light import PointLight
 from materials.material import Material
-from shapes.cone import Cone
 from shapes.teapot import Teapot
-from shapes.torus import Torus
 
 # Создаём камеру и сцену
 camera = Camera([0.0, 0.0, 5.0], [0.0, 1.0, 0.0], -90.0, 0.0)
@@ -55,6 +56,12 @@ def display():
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
+    # Включаем глубинный тест
+    glEnable(GL_DEPTH_TEST)
+
+    # Включаем запись в буфер глубины снова
+    glDepthMask(GL_TRUE)
+
     # Рисуем индикатор источника света
     point_light.draw_indicator()
 
@@ -77,22 +84,59 @@ def main():
 
     init()
 
+    # Создаем материалы
+    transparent_material = Material(
+        ambient=[0.2, 0.2, 0.2, 0.5],
+        diffuse=[0.8, 0.0, 0.0, 0.5],
+        specular=[1.0, 1.0, 1.0, 1.0],
+        shininess=30,
+        transparency=0.8
+    )
+
+    # Очень полированная поверхность для тора
+    polished_material = Material(
+        ambient=[0.3, 0.3, 0.3, 1.0],
+        diffuse=[0.4, 0.4, 0.4, 1.0],
+        specular=[2.0, 2.0, 2.0, 1.0],
+        shininess=128
+    )
+
+    # Матовый объект с текстурой (например, октаэдр)
+    diffuse_material = Material(
+        ambient=[0.2, 0.2, 0.2, 1.0],
+        diffuse=[0.6, 0.6, 0.6, 1.0],
+        specular=[0.1, 0.1, 0.1, 1.0],
+        shininess=10
+    )
+
     # Создаем объекты
+    # Добавим комнату темно-серого цвета
+    room = Cube(position=[0.0, 9.0, 0.0], scale=20.0, color=[0.5, 0.5, 0.5], material=diffuse_material)
+    scene.add_object(room)
+
+    # Загружаем текстуру
+    texture = Texture("data/textures/wool.jpg")
+    texture.load()
+
+    # Создаем текстурированный объект (например, куб)
+    textured_cube = TexturedCube(position=[0.0, 0.0, -5.0], scale=2.0, texture=texture)
+    scene.add_object(textured_cube)
+
     # Полированный тор
-    polished_torus = Torus(position=[2.0, 0.0, 0.0], scale=1.0, color=[0.5, 0.5, 0.5],
-                           material=Material(specular=[1.0, 1.0, 1.0, 1.0], shininess=128))
+    polished_teapot = Teapot(position=[-3.0, 0.0, 0.0], scale=1.0, color=[0.0, 1.0, 1.0],  # Голубой полированный
+                             material=polished_material)
 
     # Прозрачный чайник
-    transparent_teapot = Teapot(position=[-2.0, 0.0, 0.0], scale=1.0, color=[0.0, 1.0, 1.0],
-                                material=Material(diffuse=[0.0, 1.0, 1.0, 0.6], transparency=0.6))
+    transparent_teapot = Teapot(position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 0.0, 1.0],  # Розовый прозрачный
+                                material=transparent_material)
 
     # Матовый конус
-    matte_cone = Cone(base_radius=1.0, height=2.0, position=[0.0, 0.0, 0.0], scale=1.0,
-                      material=Material(diffuse=[0.8, 0.8, 0.0, 1.0], shininess=10))
+    matte_teapot = Teapot(position=[3.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 0.0],  # Жёлтый матовый
+                          material=diffuse_material)
 
-    scene.add_object(polished_torus)
+    scene.add_object(polished_teapot)
     scene.add_object(transparent_teapot)
-    scene.add_object(matte_cone)
+    scene.add_object(matte_teapot)
 
     # Создаем анимацию вращения источника света
     light_rotation_animation = LightRotationAnimation(point_light, radius=5.0, speed=30.0)

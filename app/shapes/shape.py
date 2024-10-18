@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 
 from OpenGL.GL import *
+from OpenGL.GLU import *
+from OpenGL.GLUT import *
 
 
 class Shape(ABC):
@@ -34,10 +36,10 @@ class Shape(ABC):
     def apply_texture(self):
         """Применение текстуры, если она существует."""
         if self.texture:
-            glEnable(GL_TEXTURE_2D)
-            self.texture.apply()
+            glEnable(GL_TEXTURE_2D)  # Включаем текстурирование
+            self.texture.apply()  # Применяем текстуру
         else:
-            glDisable(GL_TEXTURE_2D)
+            glDisable(GL_TEXTURE_2D)  # Отключаем текстурирование, если текстуры нет
 
     def draw_center_axes(self, axis_length=0.2):
         """Отрисовка осей координат в центре объекта."""
@@ -88,8 +90,7 @@ class Shape(ABC):
         self.draw()
         self.draw_edges()
 
-        # Отключаем текстуры, если они были использованы
-        if self.texture:
-            glDisable(GL_TEXTURE_2D)
+        # Отключаем текстуры после их использования
+        glDisable(GL_TEXTURE_2D)
 
         glPopMatrix()
