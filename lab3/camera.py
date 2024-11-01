@@ -15,7 +15,6 @@ class Camera:
         # Вычисляем начальные векторы на основе углов yaw и pitch
         self.update_camera_vectors()
 
-
     def move_forward(self):
         """Двигает камеру вперёд."""
         self.position[0] += self.front[0] * self.speed

@@ -4,7 +4,8 @@ from lab3.shapes.shape import Shape
 
 
 class Cube(Shape):
-    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0], material=None, texture=None):
+    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0],
+                 material=None, texture=None):
         super().__init__(position, scale, color, rotation, material, texture)
 
     def draw(self):

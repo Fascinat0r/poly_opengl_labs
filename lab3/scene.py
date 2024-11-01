@@ -32,7 +32,6 @@ class Scene:
         # Возвращаемся к модельной матрице
         glMatrixMode(GL_MODELVIEW)
 
-
     def set_camera(self, camera):
         """Устанавливаем камеру для сцены."""
         self.camera = camera
