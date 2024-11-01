@@ -3,12 +3,12 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 from animations.looped_rotation_animation import LoopedRotationAnimation
+from camera import Camera
+from handlers import create_mouse_movement_handler, key_pressed, key_released, handle_camera_movement
 from lab2.animations.looped_movement_animation import LoopedMovementAnimation
 from lab2.shapes.octahedron import Octahedron
 from lab2.shapes.teapot import Teapot
 from lab2.shapes.torus import Torus
-from camera import Camera
-from handlers import create_mouse_movement_handler, key_pressed, key_released, handle_camera_movement
 from scene import Scene
 from shapes.cone import Cone
 
