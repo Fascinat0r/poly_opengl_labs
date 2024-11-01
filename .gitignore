@@ -3,3 +3,8 @@ pyopengl
 **/*.pyc
 **/__pycache__/
 /pyopengl/
+
+*.rar
+*.zip
+*.tar
+
