@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 
-from lab2.shapes.shape import Shape
+from lab3.shapes.shape import Shape
 
 
 class Teapot(Shape):

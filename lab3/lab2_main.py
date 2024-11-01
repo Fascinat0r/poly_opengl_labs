@@ -2,13 +2,13 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from lab2.animations.ligth_rotation_animation import LightRotationAnimation
-from lab2.camera import Camera
-from lab2.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
-from lab2.materials.textures import Texture
-from lab2.scene import Scene
-from lab2.shapes.TexturedCube import TexturedCube
-from lab2.shapes.cube import Cube
+from lab3.animations.ligth_rotation_animation import LightRotationAnimation
+from lab3.camera import Camera
+from lab3.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
+from lab3.materials.textures import Texture
+from lab3.scene import Scene
+from lab3.shapes.TexturedCube import TexturedCube
+from lab3.shapes.cube import Cube
 from light.point_light import PointLight
 from materials.material import Material
 from shapes.teapot import Teapot

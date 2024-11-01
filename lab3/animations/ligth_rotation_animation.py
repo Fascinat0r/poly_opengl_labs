@@ -1,6 +1,6 @@
 import math
 
-from lab2.animations.animation import Animation
+from lab3.animations.animation import Animation
 
 
 class LightRotationAnimation(Animation):
