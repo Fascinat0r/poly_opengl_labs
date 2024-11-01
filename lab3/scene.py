@@ -1,15 +1,46 @@
 from OpenGL.GL import *
+from OpenGL.GLU import *
 from OpenGL.GLUT import *
+
+from lab3.light.point_light import PointLight
 
 
 class Scene:
     def __init__(self):
+        # Камера сцены
+        self.camera = None
+
+        # Свет в сцене
+        self.lights = []
+
         # Список объектов в сцене
         self.objects = []
         # Список анимаций, привязанных к объектам сцены
         self.animations = []
         # Время последней отрисовки сцены
         self.last_update_time = glutGet(GLUT_ELAPSED_TIME)
+
+        # Настраиваем темную сцену
+        glClearColor(0.0, 0.0, 0.0, 1.0)  # Фоновый черный цвет
+
+        # Настраиваем проекционную матрицу
+        glMatrixMode(GL_PROJECTION)
+        # Сбрасываем матрицу
+        glLoadIdentity()
+        # Устанавливаем перспективу
+        gluPerspective(45, 800 / 600, 0.1, 100.0)
+        # Возвращаемся к модельной матрице
+        glMatrixMode(GL_MODELVIEW)
+
+
+    def set_camera(self, camera):
+        """Устанавливаем камеру для сцены."""
+        self.camera = camera
+
+    def add_light(self, light: PointLight):
+        """Добавляем источник света в сцену."""
+        light.apply()
+        self.lights.append(light)
 
     def add_object(self, obj):
         """Добавляем объекты (кубы, конусы и т.д.) в сцену."""
@@ -52,6 +83,29 @@ class Scene:
         glEnd()
 
     def render(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()
+
+        position, target, up = self.camera.get_view_matrix()
+        gluLookAt(position[0], position[1], position[2], target[0], target[1], target[2], up[0], up[1], up[2])
+
+        # Обновляем анимации в сцене
+        self.update_animations()
+
+        # Включаем режим прозрачности
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+        # Включаем глубинный тест
+        glEnable(GL_DEPTH_TEST)
+
+        # Включаем запись в буфер глубины снова
+        glDepthMask(GL_TRUE)
+
+        # Рисуем индикатор источника света
+        for light in self.lights:
+            light.draw_indicator()
+
         # Render opaque objects first
         for obj in self.objects:
             if not obj.material or obj.material.transparency == 1.0:
@@ -67,6 +121,8 @@ class Scene:
 
         glDepthMask(GL_TRUE)  # Re-enable depth buffer writing
         glDisable(GL_BLEND)
+
+        glutSwapBuffers()
 
     def update_animations(self):
         """Обновление всех анимаций с учетом времени."""
