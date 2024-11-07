@@ -3,7 +3,6 @@ from lab3.camera import Camera
 from lab3.materials.textures import Texture
 from lab3.render_window import RenderWindow
 from lab3.scene import Scene
-from lab3.shapes.TexturedCube import TexturedCube
 from lab3.shapes.cube import Cube
 from light.point_light import PointLight
 from materials.material import Material
@@ -19,6 +18,10 @@ def main():
     # Создаем камеру
     camera = Camera([0.0, 0.0, 5.0], [0.0, 1.0, 0.0], -90.0, 0.0)
     scene.set_camera(camera)
+
+    # Загрузка текстуры для текстурированного куба
+    texture = Texture("../data/textures/leafs.png")
+    texture.load()
 
     # Источник света - точечный свет
     point_light = PointLight(position=[0.0, 5.0, 5.0, 1.0],
@@ -42,7 +45,7 @@ def main():
         color=[0.2, 0.2, 0.6, 1.0],  # Голубой цвет
         shininess=128,
         specular=[2.0, 2.0, 2.0, 1.0],
-        diffuse=[0.4, 0.4, 0.4, 1.0]
+        diffuse=[0.4, 0.4, 0.4, 1.0],
     )
 
     # Матовый материал для объектов с текстурой
@@ -68,14 +71,16 @@ def main():
     room = Cube(position=[0.0, 9.0, 0.0], scale=20.0, material=background_material)
     scene.add_object(room)
 
-    # Загрузка текстуры для текстурированного куба
-    texture = Texture("../data/textures/wool.jpg")
-    texture.load()
-
     # Создаем текстурированный куб с матовым материалом
-    textured_cube_material = Material(color=[1.0, 1.0, 1.0, 1.0], diffuse=[0.8, 0.8, 0.8, 1.0],
-                                      texture=texture.texture_id)
-    textured_cube = TexturedCube(position=[0.0, 0.0, -5.0], scale=2.0, material=textured_cube_material)
+    textured_cube_material = Material(
+        color=[1.0, 1.0, 1.0, 0.0],
+        shininess=10,
+        specular=[0.1, 0.1, 0.1, 1.0],
+        diffuse=[0.8, 0.8, 0.8, 1.0],
+        texture=texture.texture_id,
+        transparent=True)
+
+    textured_cube = Cube(position=[1.0, 1.0, -5.0], scale=2.0, material=textured_cube_material)
     scene.add_object(textured_cube)
 
     # Полированный голубой чайник
@@ -83,7 +88,10 @@ def main():
     scene.add_object(polished_teapot)
 
     # Прозрачный розовый чайник
-    transparent_teapot = Teapot(position=[0.0, 0.0, 0.0], scale=1.0, material=transparent_material)
+    transparent_teapot = Teapot(
+        position=[0.0, 0.0, 0.0],
+        scale=1.0,
+        material=transparent_material)
     scene.add_object(transparent_teapot)
 
     # Матовый желтый чайник

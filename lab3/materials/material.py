@@ -3,7 +3,7 @@ from OpenGL.GL import *
 
 
 class Material:
-    def __init__(self, color=[1.0, 1.0, 1.0, 1.0], shininess=0.0, specular=[1.0, 1.0, 1.0, 1.0],
+    def __init__(self, color=[1.0, 1.0, 1.0, 0.0], shininess=0.0, specular=[1.0, 1.0, 1.0, 1.0],
                  diffuse=[1.0, 1.0, 1.0, 1.0], texture=None, transparent=False):
         """
         Конструктор материала.
