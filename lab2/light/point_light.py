@@ -1,9 +1,12 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 
+ids = [GL_LIGHT0, GL_LIGHT1, GL_LIGHT2, GL_LIGHT3, GL_LIGHT4, GL_LIGHT5, GL_LIGHT6, GL_LIGHT7]
+next_id = 0
+
 
 class PointLight:
-    def __init__(self, light_id, position=[0.0, 0.0, 1.0, 1.0],
+    def __init__(self, position=[0.0, 0.0, 1.0, 1.0],
                  ambient=[0.05, 0.05, 0.05, 1.0],
                  diffuse=[1.0, 1.0, 1.0, 1.0],
                  specular=[1.0, 1.0, 1.0, 1.0],
@@ -16,7 +19,9 @@ class PointLight:
         specular: Зеркальный свет.
         attenuation: Аттенюация (затухание света) [constant, linear, quadratic].
         """
-        self.light_id = light_id
+        global next_id  # TODO: костыль
+        self.light_id = ids[next_id]
+        next_id += 1
         self.position = position
         self.ambient = ambient
         self.diffuse = diffuse

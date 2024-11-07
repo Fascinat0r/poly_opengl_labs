@@ -4,16 +4,16 @@ from lab2.shapes.shape import Shape
 
 
 class Octahedron(Shape):
-    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0],
-                 material=None, texture=None):
-        super().__init__(position, scale, color, rotation, material, texture)
+    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, rotation=[0.0, 0.0, 0.0],
+                 material=None):
+        super().__init__(position, scale, rotation, material=material)
 
     def draw(self):
         """Отрисовка октаэдра с заданным цветом."""
         glPushMatrix()  # Сохраняем текущее состояние матрицы
         glTranslatef(self.position[0], self.position[1], self.position[2])  # Перемещаем октаэдр
         glScalef(self.scale, self.scale, self.scale)  # Масштабируем октаэдр
-        glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
+        # glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
 
         glBegin(GL_TRIANGLES)
 
