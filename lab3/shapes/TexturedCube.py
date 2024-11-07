@@ -5,14 +5,14 @@ from lab3.shapes.shape import Shape
 
 
 class TexturedCube(Shape):
-    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, texture=None):
-        super().__init__(position, scale, color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0], material=None,
-                         texture=texture)
+    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, rotation=[0.0, 0.0, 0.0],
+                 material=None):
+        super().__init__(position, scale, rotation, material=material)
 
     def draw(self):
         """Отрисовка куба с текстурой."""
-        if self.texture:
-            self.apply_texture()
+        #if self.texture:
+        #    self.apply_texture()
 
         # Убедимся, что мы не устанавливаем лишний цвет, который может искажать текстуру
         glColor3f(1.0, 1.0, 1.0)  # Устанавливаем белый цвет, чтобы не искажать текстуру

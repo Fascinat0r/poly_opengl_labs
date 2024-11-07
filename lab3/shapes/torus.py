@@ -7,8 +7,9 @@ from lab3.shapes.shape import Shape
 
 class Torus(Shape):
     def __init__(self, inner_radius=0.5, outer_radius=1.0, rings=30, sides=30, position=[0.0, 0.0, 0.0], scale=1.0,
-                 color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0], material=None, texture=None):
-        super().__init__(position, scale, color, rotation, material, texture)
+                 rotation=[0.0, 0.0, 0.0],
+                 material=None):
+        super().__init__(position, scale, rotation, material=material)
         self.inner_radius = inner_radius  # Внутренний радиус тора
         self.outer_radius = outer_radius  # Внешний радиус тора
         self.rings = rings  # Количество сегментов по кольцу
@@ -18,7 +19,7 @@ class Torus(Shape):
         """Отрисовка тора с заданным цветом."""
         glPushMatrix()
 
-        glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
+        # glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
         self.draw_surface()
 
         glPopMatrix()

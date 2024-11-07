@@ -4,16 +4,16 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+from lab3.materials.material import Material
+
 
 class Shape(ABC):
-    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0],
-                 material=None, texture=None):
-        self.position = position  # Позиция фигуры
-        self.scale = scale  # Масштаб фигуры
-        self.color = color  # Цвет фигуры
-        self.rotation = rotation  # Вектор вращения (углы вращения по осям X, Y, Z)
-        self.material = material  # Материал фигуры
-        self.texture = texture  # Текстура фигуры (если есть)
+    def __init__(self, position, scale, rotation, color=[1.0, 1.0, 1.0, 1.0],
+                 material=None):
+        self.position = position
+        self.scale = scale
+        self.rotation = rotation
+        self.material = material if material else Material(color=color)  # Материал объекта
 
     @abstractmethod
     def draw(self):
@@ -30,8 +30,9 @@ class Shape(ABC):
         if self.material:
             self.material.apply()
         else:
+            pass
             # Если материал не указан, просто используем цвет
-            glColor3f(self.color[0], self.color[1], self.color[2])
+            #glColor3f(self.color[0], self.color[1], self.color[2])
 
     def apply_texture(self):
         """Применение текстуры, если она существует."""
@@ -63,34 +64,24 @@ class Shape(ABC):
         glEnd()
 
     def render(self):
-        """Отрисовка фигуры с применением всех трансформаций, материалов и текстур."""
+        """Отрисовка фигуры с применением трансформаций и материала."""
+        # Сохраняем текущую матрицу
         glPushMatrix()
-
-        # 1. Перемещаем объект в его позицию
-        glTranslatef(self.position[0], self.position[1], self.position[2])
-
-        # 2. Применяем вращение по каждой оси
-        glRotatef(self.rotation[0], 1.0, 0.0, 0.0)  # Вращение вокруг оси X
-        glRotatef(self.rotation[1], 0.0, 1.0, 0.0)  # Вращение вокруг оси Y
-        glRotatef(self.rotation[2], 0.0, 0.0, 1.0)  # Вращение вокруг оси Z
-
-        # 3. Применяем материал
-        self.apply_material()
-
-        # 4. Применяем текстуру
-        self.apply_texture()
-
-        # 5. Применяем масштабирование, если необходимо
+        # Применяем трансформации объекта
+        glTranslatef(*self.position)
+        # Поворачиваем объект
+        glRotatef(self.rotation[0], 1.0, 0.0, 0.0)
+        glRotatef(self.rotation[1], 0.0, 1.0, 0.0)
+        glRotatef(self.rotation[2], 0.0, 0.0, 1.0)
+        # Масштабируем объект
         glScalef(self.scale, self.scale, self.scale)
 
-        # 6. Отрисовка осей координат в центре объекта
+        self.material.apply()  # Применение материала
+        self.draw()  # Отрисовка объекта
+        self.material.cleanup()  # Очистка после рендеринга
+
+        # Отрисовка осей координат в центре объекта
         self.draw_center_axes()
 
-        # 7. Отрисовываем объект
-        self.draw()
-        self.draw_edges()
-
-        # Отключаем текстуры после их использования
-        glDisable(GL_TEXTURE_2D)
-
+        # Восстанавливаем матрицу
         glPopMatrix()

@@ -1,3 +1,5 @@
+from math import sqrt
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -81,44 +83,58 @@ class Scene:
 
         glEnd()
 
+    def sort_objects(self):
+        """Разделяет объекты на непрозрачные и прозрачные и сортирует прозрачные по расстоянию до камеры."""
+        opaque_objects = [obj for obj in self.objects if not obj.material.transparent]
+        transparent_objects = [obj for obj in self.objects if obj.material.transparent]
+
+        # Сортируем прозрачные объекты по убыванию расстояния до камеры
+        transparent_objects.sort(key=lambda obj: -self.distance_to_camera(obj.position))
+
+        return opaque_objects, transparent_objects
+
+    def distance_to_camera(self, position):
+        """Вычисляет расстояние от позиции до камеры."""
+        cam_pos = self.camera.position
+        return sqrt((position[0] - cam_pos[0]) ** 2 +
+                    (position[1] - cam_pos[1]) ** 2 +
+                    (position[2] - cam_pos[2]) ** 2)
+
     def render(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glLoadIdentity()
 
+        # Устанавливаем матрицу вида для камеры
         position, target, up = self.camera.get_view_matrix()
         gluLookAt(position[0], position[1], position[2], target[0], target[1], target[2], up[0], up[1], up[2])
 
         # Обновляем анимации в сцене
         self.update_animations()
 
-        # Включаем режим прозрачности
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-        # Включаем глубинный тест
-        glEnable(GL_DEPTH_TEST)
-
-        # Включаем запись в буфер глубины снова
-        glDepthMask(GL_TRUE)
+        # Отрисовываем сетку и оси
+        self.draw_grid()
+        self.draw_axes()
 
         # Рисуем индикатор источника света
         for light in self.lights:
             light.draw_indicator()
 
-        # Render opaque objects first
-        for obj in self.objects:
-            if not obj.material or obj.material.transparency == 1.0:
-                obj.render()
+        # Разделяем и сортируем объекты
+        opaque_objects, transparent_objects = self.sort_objects()
 
-        # Then render transparent objects
+        # Рендер непрозрачных объектов
+        for obj in opaque_objects:
+            obj.render()
+
+        # Рендер прозрачных объектов в правильном порядке
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glDepthMask(GL_FALSE)  # Disable depth buffer writing
-        for obj in self.objects:
-            if obj.material and obj.material.transparency < 1.0:
-                obj.render()
+        glDepthMask(GL_FALSE)  # Отключаем запись в буфер глубины для прозрачных объектов
 
-        glDepthMask(GL_TRUE)  # Re-enable depth buffer writing
+        for obj in transparent_objects:
+            obj.render()
+
+        glDepthMask(GL_TRUE)  # Восстанавливаем запись в буфер глубины
         glDisable(GL_BLEND)
 
         glutSwapBuffers()

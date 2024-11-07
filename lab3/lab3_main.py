@@ -28,58 +28,66 @@ def main():
                              attenuation=[1.0, 0.1, 0.01])  # Затухание света
     scene.add_light(point_light)
 
-    # Создаем материалы
+    # Создаем материалы с использованием нового класса Material
     transparent_material = Material(
-        ambient=[0.2, 0.2, 0.2, 0.5],
-        diffuse=[0.8, 0.0, 0.0, 0.5],
-        specular=[1.0, 1.0, 1.0, 1.0],
+        color=[0.8, 0.0, 0.0, 0.5],  # Красный с прозрачностью 0.5
         shininess=30,
-        transparency=0.8
+        specular=[1.0, 1.0, 1.0, 1.0],
+        diffuse=[0.8, 0.0, 0.0, 0.5],  # Диффузный красный цвет с альфа 0.5
+        transparent=True  # Включение прозрачности
     )
 
-    # Очень полированная поверхность для тора
+    # Полированный материал для тороидального объекта
     polished_material = Material(
-        ambient=[0.3, 0.3, 0.3, 1.0],
-        diffuse=[0.4, 0.4, 0.4, 1.0],
+        color=[0.2, 0.2, 0.6, 1.0],  # Голубой цвет
+        shininess=128,
         specular=[2.0, 2.0, 2.0, 1.0],
-        shininess=128
+        diffuse=[0.4, 0.4, 0.4, 1.0]
     )
 
-    # Матовый объект с текстурой (например, октаэдр)
+    # Матовый материал для объектов с текстурой
     diffuse_material = Material(
-        ambient=[0.2, 0.2, 0.2, 1.0],
-        diffuse=[0.6, 0.6, 0.6, 1.0],
+        # Жёлтый
+        color=[0.8, 0.8, 0.0, 1.0],
+        shininess=10,
         specular=[0.1, 0.1, 0.1, 1.0],
-        shininess=10
+        diffuse=[0.6, 0.6, 0.6, 1.0]
     )
 
-    # Создаем объекты
-    # Добавим комнату темно-серого цвета
-    room = Cube(position=[0.0, 9.0, 0.0], scale=20.0, color=[0.5, 0.5, 0.5], material=diffuse_material)
+    # Матовый материал для фона
+    background_material = Material(
+        color=[0.1, 0.1, 0.1, 1.0],
+        shininess=10,
+        specular=[0.1, 0.1, 0.1, 1.0],
+        diffuse=[0.1, 0.1, 0.1, 1.0]
+    )
+
+    # Создаем объекты и применяем материалы
+
+    # Объект комнаты с матовым материалом
+    room = Cube(position=[0.0, 9.0, 0.0], scale=20.0, material=background_material)
     scene.add_object(room)
 
-    # Загружаем текстуру
+    # Загрузка текстуры для текстурированного куба
     texture = Texture("../data/textures/wool.jpg")
     texture.load()
 
-    # Создаем текстурированный объект (например, куб)
-    textured_cube = TexturedCube(position=[0.0, 0.0, -5.0], scale=2.0, texture=texture)
+    # Создаем текстурированный куб с матовым материалом
+    textured_cube_material = Material(color=[1.0, 1.0, 1.0, 1.0], diffuse=[0.8, 0.8, 0.8, 1.0],
+                                      texture=texture.texture_id)
+    textured_cube = TexturedCube(position=[0.0, 0.0, -5.0], scale=2.0, material=textured_cube_material)
     scene.add_object(textured_cube)
 
-    # Полированный тор
-    polished_teapot = Teapot(position=[-3.0, 0.0, 0.0], scale=1.0, color=[0.0, 1.0, 1.0],  # Голубой полированный
-                             material=polished_material)
-
-    # Прозрачный чайник
-    transparent_teapot = Teapot(position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 0.0, 1.0],  # Розовый прозрачный
-                                material=transparent_material)
-
-    # Матовый конус
-    matte_teapot = Teapot(position=[3.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 0.0],  # Жёлтый матовый
-                          material=diffuse_material)
-
+    # Полированный голубой чайник
+    polished_teapot = Teapot(position=[-3.0, 0.0, 0.0], scale=1.0, material=polished_material)
     scene.add_object(polished_teapot)
+
+    # Прозрачный розовый чайник
+    transparent_teapot = Teapot(position=[0.0, 0.0, 0.0], scale=1.0, material=transparent_material)
     scene.add_object(transparent_teapot)
+
+    # Матовый желтый чайник
+    matte_teapot = Teapot(position=[3.0, 0.0, 0.0], scale=1.0, material=diffuse_material)
     scene.add_object(matte_teapot)
 
     # Создаем анимацию вращения источника света

@@ -7,15 +7,15 @@ from lab3.shapes.shape import Shape
 
 class Cone(Shape):
     def __init__(self, base_radius=1.0, height=2.0, slices=30, position=[0.0, 0.0, 0.0], scale=1.0,
-                 color=[1.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0], material=None, texture=None):
-        super().__init__(position, scale, color, rotation, material, texture)
+                 rotation=[0.0, 0.0, 0.0], material=None):
+        super().__init__(position, scale, rotation, material=material)
         self.base_radius = base_radius  # Радиус основания конуса
         self.height = height  # Высота конуса
         self.slices = slices  # Количество сегментов по окружности
 
     def draw(self):
         """Отрисовка поверхности конуса с заданным цветом."""
-        glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
+        # glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
         self.draw_surface()
 
     def draw_edges(self):
