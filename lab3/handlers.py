@@ -1,4 +1,6 @@
 from OpenGL.GLUT import *
+from lab3.camera import Camera
+from lab3.shadow_map import ShadowMap
 
 # Используем глобальный словарь для отслеживания нажатых клавиш
 keys = {
@@ -7,9 +9,13 @@ keys = {
     's': False,
     'd': False,
     'c': False,  # Для спуска вниз
-    ' ': False  # Для подъёма вверх (пробел)
+    ' ': False,  # Для подъёма вверх (пробел)
 }
 
+# Отдельный флаг для отслеживания состояния переключения теней
+toggle_pressed = {
+    't': False
+}
 # Начальные значения для мыши
 last_x, last_y = 400, 300
 first_mouse = True
@@ -18,41 +24,46 @@ first_mouse = True
 # Обработка нажатий клавиш
 def key_pressed(key, x, y):
     """Обработка нажатий клавиш."""
-    global keys
+    global keys, toggle_pressed
     if key == b'w':
         keys['w'] = True
-    if key == b'a':
+    elif key == b'a':
         keys['a'] = True
-    if key == b's':
+    elif key == b's':
         keys['s'] = True
-    if key == b'd':
+    elif key == b'd':
         keys['d'] = True
-    if key == b'c':
+    elif key == b'c':
         keys['c'] = True  # Спуск камеры
-    if key == b' ':  # Пробел
+    elif key == b' ':  # Пробел
         keys[' '] = True  # Подъём камеры
+    elif key == b't' and not toggle_pressed['t']:
+        # Переключаем шейдер только при первом нажатии клавиши 't'
+        toggle_pressed['t'] = True
 
 
 # Обработка отпусканий клавиш
 def key_released(key, x, y):
     """Обработка отпусканий клавиш."""
-    global keys
+    global keys, toggle_pressed
     if key == b'w':
         keys['w'] = False
-    if key == b'a':
+    elif key == b'a':
         keys['a'] = False
-    if key == b's':
+    elif key == b's':
         keys['s'] = False
-    if key == b'd':
+    elif key == b'd':
         keys['d'] = False
-    if key == b'c':
+    elif key == b'c':
         keys['c'] = False  # Остановка спуска
-    if key == b' ':  # Пробел
+    elif key == b' ':  # Пробел
         keys[' '] = False  # Остановка подъёма
+    elif key == b't':
+        toggle_pressed['t'] = False  # Сбрасываем флаг переключения
 
 
 # Обработка движения камеры
-def handle_camera_movement(camera):
+def handle_camera_movement(camera: Camera):
     """Движение камеры на основе нажатых клавиш."""
     if keys['w']:
         camera.move_forward()
@@ -66,6 +77,14 @@ def handle_camera_movement(camera):
         camera.move_down()  # Спуск камеры вниз
     if keys[' ']:
         camera.move_up()  # Подъём камеры вверх
+
+
+def handle_shader_switch(shader: ShadowMap):
+    """Включение/выключение шейдера, если кнопка 't' нажата."""
+    global toggle_pressed
+    if toggle_pressed['t']:
+        shader.toggle_shader()
+        toggle_pressed['t'] = False  # Сбрасываем флаг переключения после активации
 
 
 # Создание обработчика движения мыши
