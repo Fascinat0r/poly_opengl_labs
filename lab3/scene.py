@@ -100,45 +100,6 @@ class Scene:
                     (position[1] - cam_pos[1]) ** 2 +
                     (position[2] - cam_pos[2]) ** 2)
 
-    def render(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()
-
-        # Устанавливаем матрицу вида для камеры
-        position, target, up = self.camera.get_view_matrix()
-        gluLookAt(position[0], position[1], position[2], target[0], target[1], target[2], up[0], up[1], up[2])
-
-        # Обновляем анимации в сцене
-        self.update_animations()
-
-        # Отрисовываем сетку и оси
-        self.draw_grid()
-        self.draw_axes()
-
-        # Рисуем индикатор источника света
-        for light in self.lights:
-            light.draw_indicator()
-
-        # Разделяем и сортируем объекты
-        opaque_objects, transparent_objects = self.sort_objects()
-
-        # Рендер непрозрачных объектов
-        for obj in opaque_objects:
-            obj.render()
-
-        # Рендер прозрачных объектов в правильном порядке
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glDepthMask(GL_FALSE)  # Отключаем запись в буфер глубины для прозрачных объектов
-
-        for obj in transparent_objects:
-            obj.render()
-
-        glDepthMask(GL_TRUE)  # Восстанавливаем запись в буфер глубины
-        glDisable(GL_BLEND)
-
-        glutSwapBuffers()
-
     def update_animations(self):
         """Обновление всех анимаций с учетом времени."""
         current_time = glutGet(GLUT_ELAPSED_TIME)

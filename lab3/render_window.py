@@ -2,7 +2,9 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from lab3.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
+from lab3.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement, \
+    handle_shader_switch
+from lab3.shadow_map import ShadowMap
 from lab3.scene import Scene
 
 
@@ -16,6 +18,8 @@ class RenderWindow:
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
         glutInitWindowSize(self.width, self.height)
         glutCreateWindow(self.title)
+
+        self.shadow_map = ShadowMap()
 
         # Включаем режим прозрачности
         glEnable(GL_DEPTH_TEST)
@@ -34,8 +38,8 @@ class RenderWindow:
     def run(self):
         # Устанавливаем обработчики
         glutReshapeFunc(self.reshape)
-        glutDisplayFunc(self.scene.render)
-        glutIdleFunc(self.scene.render)
+        glutDisplayFunc(self.render)
+        glutIdleFunc(self.render)
         glutKeyboardFunc(key_pressed)  # Обычные клавиши
         glutKeyboardUpFunc(key_released)  # Отпускание обычных клавиш
         glutPassiveMotionFunc(create_mouse_movement_handler(self.scene.camera))
@@ -45,6 +49,7 @@ class RenderWindow:
 
     def update(self, value):
         handle_camera_movement(self.scene.camera)  # Обновляем позицию камеры
+        handle_shader_switch(self.shadow_map)  # Переключаем шейдеры для теней
         glutPostRedisplay()
         glutTimerFunc(16, self.update, 0)
 
@@ -60,3 +65,47 @@ class RenderWindow:
         gluPerspective(45, aspect_ratio, 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
         glutWarpPointer(self.width // 2, self.height // 2)
+
+    def toggle_shadows(self):
+        """Переключает состояние теней."""
+        self.shadows_enabled = not self.shadows_enabled
+        print("Тени включены" if self.shadows_enabled else "Тени выключены")
+
+    def render(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()
+
+        # Устанавливаем матрицу вида для камеры
+        position, target, up = self.scene.camera.get_view_matrix()
+        gluLookAt(position[0], position[1], position[2], target[0], target[1], target[2], up[0], up[1], up[2])
+
+        # Обновляем анимации в сцене
+        self.scene.update_animations()
+
+        # Отрисовываем сетку и оси
+        self.scene.draw_grid()
+        self.scene.draw_axes()
+
+        # Рисуем индикатор источника света
+        for light in self.scene.lights:
+            light.draw_indicator()
+
+        # Разделяем и сортируем объекты
+        opaque_objects, transparent_objects = self.scene.sort_objects()
+
+        # Рендер непрозрачных объектов
+        for obj in opaque_objects:
+            obj.render()
+
+        # Рендер прозрачных объектов в правильном порядке
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glDepthMask(GL_FALSE)  # Отключаем запись в буфер глубины для прозрачных объектов
+
+        for obj in transparent_objects:
+            obj.render()
+
+        glDepthMask(GL_TRUE)  # Восстанавливаем запись в буфер глубины
+        glDisable(GL_BLEND)
+
+        glutSwapBuffers()
