@@ -11,8 +11,6 @@ class Cube(Shape):
     def draw(self):
         """Отрисовка куба с текстурой и нормалями для корректного освещения."""
 
-        #self.material.apply()  # Применение материала
-
         glColor3f(1.0, 1.0, 1.0)  # Устанавливаем белый цвет, чтобы не искажать текстуру
 
         glBegin(GL_QUADS)
@@ -84,9 +82,6 @@ class Cube(Shape):
         glVertex3f(0.5, -0.5, -0.5)
 
         glEnd()
-
-        # glDisable(GL_TEXTURE_2D)  # Отключаем текстурирование
-        # self.material.cleanup()  # Очистка после рендеринга
 
     def draw_edges(self):
         """Отрисовка рёбер куба (контуров)."""

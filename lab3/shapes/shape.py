@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 
 from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
-
 from lab3.materials.material import Material
 
 
@@ -25,24 +22,8 @@ class Shape(ABC):
         """Отрисовка рёбер фигуры."""
         pass
 
-    def apply_material(self):
-        """Применение материала для фигуры."""
-        if self.material:
-            self.material.apply()
-        else:
-            pass
-            # Если материал не указан, просто используем цвет
-            #glColor3f(self.color[0], self.color[1], self.color[2])
-
-    def apply_texture(self):
-        """Применение текстуры, если она существует."""
-        if self.texture:
-            glEnable(GL_TEXTURE_2D)  # Включаем текстурирование
-            self.texture.apply()  # Применяем текстуру
-        else:
-            glDisable(GL_TEXTURE_2D)  # Отключаем текстурирование, если текстуры нет
-
-    def draw_center_axes(self, axis_length=0.2):
+    @staticmethod
+    def draw_center_axes(axis_length=0.2):
         """Отрисовка осей координат в центре объекта."""
         glBegin(GL_LINES)
 

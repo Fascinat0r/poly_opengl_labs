@@ -1,11 +1,10 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-
 from lab3.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement, \
     handle_shader_switch
-from lab3.shadow_map import ShadowMap
 from lab3.scene import Scene
+from lab3.shadow_map import ShadowMap
 
 
 class RenderWindow:
@@ -65,11 +64,6 @@ class RenderWindow:
         gluPerspective(45, aspect_ratio, 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
         glutWarpPointer(self.width // 2, self.height // 2)
-
-    def toggle_shadows(self):
-        """Переключает состояние теней."""
-        self.shadows_enabled = not self.shadows_enabled
-        print("Тени включены" if self.shadows_enabled else "Тени выключены")
 
     def render(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
