@@ -1,6 +1,5 @@
 from OpenGL.GLUT import *
 from lab3.camera import Camera
-from lab3.shadow_map import ShadowMap
 
 # Используем глобальный словарь для отслеживания нажатых клавиш
 keys = {
@@ -77,14 +76,6 @@ def handle_camera_movement(camera: Camera):
         camera.move_down()  # Спуск камеры вниз
     if keys[' ']:
         camera.move_up()  # Подъём камеры вверх
-
-
-def handle_shader_switch(shader: ShadowMap):
-    """Включение/выключение шейдера, если кнопка 't' нажата."""
-    global toggle_pressed
-    if toggle_pressed['t']:
-        shader.toggle_shader()
-        toggle_pressed['t'] = False  # Сбрасываем флаг переключения после активации
 
 
 # Создание обработчика движения мыши

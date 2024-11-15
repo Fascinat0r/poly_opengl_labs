@@ -1,10 +1,8 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-from lab3.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement, \
-    handle_shader_switch
+from lab3.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
 from lab3.scene import Scene
-from lab3.shadow_map import ShadowMap
 
 
 class RenderWindow:
@@ -17,8 +15,6 @@ class RenderWindow:
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
         glutInitWindowSize(self.width, self.height)
         glutCreateWindow(self.title)
-
-        self.shadow_map = ShadowMap()
 
         # Включаем режим прозрачности
         glEnable(GL_DEPTH_TEST)
@@ -48,7 +44,6 @@ class RenderWindow:
 
     def update(self, value):
         handle_camera_movement(self.scene.camera)  # Обновляем позицию камеры
-        handle_shader_switch(self.shadow_map)  # Переключаем шейдеры для теней
         glutPostRedisplay()
         glutTimerFunc(16, self.update, 0)
 
