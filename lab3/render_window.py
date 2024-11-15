@@ -87,10 +87,10 @@ class RenderWindow:
         self.scene.draw_grid()
         self.scene.draw_axes()
 
-        # Depth Pass: Рендерим сцену для карты глубины
+        # Depth Pass
         self.scene.render_depth_map(self.depth_shader)
 
-        # Render Pass: Рендерим основную сцену с тенями
+        # Render Pass
         self.shader.use()
         self.scene.render_scene(self.shader)
 

@@ -1,9 +1,11 @@
 # scene.py
 from math import sqrt
 
+import glm
+
 from OpenGL.GL import *
 from OpenGL.GLUT import *
-from lab3.light.point_light import PointLight
+from lab3.light.directional_light import DirectionalLight  # Импортируйте новый класс
 from lab3.materials.depth_map import DepthMap
 from lab3.materials.shader import Shader
 
@@ -27,7 +29,6 @@ class Scene:
         glClearColor(0.0, 0.0, 0.0, 1.0)  # Фоновый черный цвет
 
         # Создаем карту глубины для теней
-
         self.depth_map = DepthMap()
         self.depth_map.width = 1024
         self.depth_map.height = 1024
@@ -36,8 +37,8 @@ class Scene:
         """Устанавливаем камеру для сцены."""
         self.camera = camera
 
-    def add_light(self, light: PointLight):
-        """Добавляем источник света в сцену."""
+    def add_light(self, light: DirectionalLight):  # Измените тип
+        """Добавляем направленный источник света в сцену."""
         self.lights.append(light)
 
     def add_object(self, obj):
@@ -93,9 +94,9 @@ class Scene:
     def distance_to_camera(self, position):
         """Вычисляет расстояние от позиции до камеры."""
         cam_pos = self.camera.position
-        return sqrt((position[0] - cam_pos[0]) ** 2 +
-                    (position[1] - cam_pos[1]) ** 2 +
-                    (position[2] - cam_pos[2]) ** 2)
+        return sqrt((position[0] - cam_pos.x) ** 2 +
+                    (position[1] - cam_pos.y) ** 2 +
+                    (position[2] - cam_pos.z) ** 2)
 
     def update_animations(self):
         """Обновление всех анимаций с учетом времени."""
@@ -107,17 +108,35 @@ class Scene:
         for animation in self.animations:
             animation.update(animation.target_object, delta_time)
 
-    def render_depth_map(self, shader: Shader):
+    def render_depth_map(self, depth_shader: Shader):
         """Рендеринг сцены для создания карты глубины."""
         self.depth_map.bind_for_writing()
         glClear(GL_DEPTH_BUFFER_BIT)
 
-        # Используем шейдер для глубины
-        shader.use()
+        depth_shader.use()
 
-        # Настройка матриц для всех объектов
+        if not self.lights:
+            print("No lights in the scene for depth map.")
+            return
+
+        # Предполагаем, что у нас один направленный свет
+        light = self.lights[0]
+
+        # Настраиваем lightSpaceMatrix на основе направления света.
+        # Используем ортографическую проекцию для направленного света
+        light_projection = glm.ortho(-10.0, 10.0, -10.0, 10.0, 1.0, 20.0)
+        # Направление света
+        light_dir = glm.normalize(glm.vec3(*light.direction))
+        # Создаём матрицу вида из направления света
+        # Для направленного света позиция может быть удалена, например, позиция = -light_dir * некоторый масштаб
+        light_position = glm.vec3(-light_dir.x * 10.0, -light_dir.y * 10.0, -light_dir.z * 10.0)
+        light_view = glm.lookAt(light_position, glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 1.0, 0.0))
+        light_space_matrix = light_projection * light_view
+        depth_shader.set_mat4("lightSpaceMatrix", light_space_matrix)
+
+        # Рендерим все объекты
         for obj in self.objects:
-            obj.render(shader)
+            obj.render(depth_shader)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
@@ -130,16 +149,29 @@ class Scene:
         shader.set_mat4("view", self.camera.get_view_matrix())
         shader.set_mat4("projection", self.camera.get_projection_matrix())
 
-        # Привязываем карту глубины как текстуру
+        if not self.lights:
+            print("No lights added to the scene.")
+            return
+
+        # Предполагаем, что у нас один направленный свет
+        light = self.lights[0]
+
+        # Настраиваем lightSpaceMatrix на основе направления света
+        light_projection = glm.ortho(-10.0, 10.0, -10.0, 10.0, 1.0, 20.0)
+        light_dir = glm.normalize(glm.vec3(*light.direction))
+        light_position = glm.vec3(-light_dir.x * 10.0, -light_dir.y * 10.0, -light_dir.z * 10.0)
+        light_view = glm.lookAt(light_position, glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 1.0, 0.0))
+        light_space_matrix = light_projection * light_view
+        shader.set_mat4("lightSpaceMatrix", light_space_matrix)
+
+        # Передаём параметры направленного света
+        light.apply(shader)
+        shader.set_vec3("viewPos", self.camera.position)
+
+        # Привязываем карту глубины
         self.depth_map.bind_for_reading(unit=1)
-        shader.set_int("shadowMap", 1)  # Текстурный блок 1
+        shader.set_int("shadowMap", 1)
 
-        # Устанавливаем позиции и цвет света
-        for i, light in enumerate(self.lights):
-            shader.set_vec3("lightPos", light.position[:3])  # Предполагаем, что light.position — это список
-            shader.set_vec3("viewPos", self.camera.position)  # Исправлено: напрямую передаём glm.vec3
-            shader.set_vec3("lightColor", light.diffuse[:3])
-
-        # Рендерим все объекты
+        # Рендерим объекты
         for obj in self.objects:
             obj.render(shader)
