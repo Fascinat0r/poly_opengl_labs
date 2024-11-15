@@ -1,7 +1,12 @@
+# render_window.py
+from functools import partial
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-from lab3.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
+from lab3.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement, \
+    reset_mouse_position
+from lab3.materials.shader import Shader
 from lab3.scene import Scene
 
 
@@ -11,17 +16,20 @@ class RenderWindow:
         self.height = height
         self.title = title
         self.scene = None
+        self.shader = None
+        self.depth_shader = None
+
         glutInit()
         glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
         glutInitWindowSize(self.width, self.height)
         glutCreateWindow(self.title)
 
-        # Включаем режим прозрачности
+        # Инициализация шейдеров
+        self.shader = Shader("./shaders/shading.vert", "./shaders/shading.frag")
+        self.depth_shader = Shader("./shaders/depth.vert", "./shaders/depth.frag")
+
+        # Включаем режим теста глубины
         glEnable(GL_DEPTH_TEST)
-        # Включаем запись в буфер глубины снова
-        glEnable(GL_LIGHTING)
-        # Включаем цветовые материалы
-        glEnable(GL_COLOR_MATERIAL)
 
         # Скрываем курсор и фиксируем мышь в центре окна
         glutSetCursor(GLUT_CURSOR_NONE)
@@ -37,21 +45,29 @@ class RenderWindow:
         glutIdleFunc(self.render)
         glutKeyboardFunc(key_pressed)  # Обычные клавиши
         glutKeyboardUpFunc(key_released)  # Отпускание обычных клавиш
-        glutPassiveMotionFunc(create_mouse_movement_handler(self.scene.camera))
+        # Обработчик движения мыши с учётом размеров окна
+        glutPassiveMotionFunc(create_mouse_movement_handler(self.scene.camera, partial(self.get_window_size)))
 
+        # Запускаем таймер для обновления сцены
         glutTimerFunc(16, self.update, 0)
         glutMainLoop()
 
     def update(self, value):
         handle_camera_movement(self.scene.camera)  # Обновляем позицию камеры
+        reset_mouse_position(self.width, self.height)  # Возвращаем мышь в центр экрана
+        handle_camera_movement(self.scene.camera)  # Обновляем позицию камеры
         glutPostRedisplay()
         glutTimerFunc(16, self.update, 0)
+
+    def get_window_size(self):
+        """Возвращает текущие размеры окна."""
+        return self.width, self.height
 
     def reshape(self, width, height):
         self.width = width if width != 0 else self.width
         self.height = height if height != 0 else self.height
 
-        aspect_ratio = self.width / self.height
+        aspect_ratio = self.width / self.height if height > 0 else 1.0
 
         glViewport(0, 0, self.width, self.height)
         glMatrixMode(GL_PROJECTION)
@@ -61,40 +77,21 @@ class RenderWindow:
         glutWarpPointer(self.width // 2, self.height // 2)
 
     def render(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()
+        if not self.scene or not self.shader or not self.depth_shader:
+            return
 
-        # Устанавливаем матрицу вида для камеры
-        position, target, up = self.scene.camera.get_view_matrix()
-        gluLookAt(position[0], position[1], position[2], target[0], target[1], target[2], up[0], up[1], up[2])
-
-        # Обновляем анимации в сцене
+        # Обновляем анимации
         self.scene.update_animations()
 
-        # Отрисовываем сетку и оси
+        # Рисуем оси координат и сетку
         self.scene.draw_grid()
         self.scene.draw_axes()
 
-        # Рисуем индикатор источника света
-        for light in self.scene.lights:
-            light.draw_indicator()
+        # Depth Pass: Рендерим сцену для карты глубины
+        self.scene.render_depth_map(self.depth_shader)
 
-        # Разделяем и сортируем объекты
-        opaque_objects, transparent_objects = self.scene.sort_objects()
-
-        # Рендер непрозрачных объектов
-        for obj in opaque_objects:
-            obj.render()
-
-        # Рендер прозрачных объектов в правильном порядке
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glDepthMask(GL_FALSE)  # Отключаем запись в буфер глубины для прозрачных объектов
-
-        for obj in transparent_objects:
-            obj.render()
-
-        glDepthMask(GL_TRUE)  # Восстанавливаем запись в буфер глубины
-        glDisable(GL_BLEND)
+        # Render Pass: Рендерим основную сцену с тенями
+        self.shader.use()
+        self.scene.render_scene(self.shader)
 
         glutSwapBuffers()

@@ -1,68 +1,51 @@
+# shape.py
 from abc import ABC, abstractmethod
+
+import glm
 
 from OpenGL.GL import *
 from lab3.materials.material import Material
+from lab3.materials.shader import Shader
 
 
 class Shape(ABC):
-    def __init__(self, position, scale, rotation, color=[1.0, 1.0, 1.0, 1.0],
-                 material=None):
+    def __init__(self, position, scale, rotation, material=None):
         self.position = position
         self.scale = scale
         self.rotation = rotation
-        self.material = material if material else Material(color=color)  # Материал объекта
+        self.material = material if material else Material()
+
+        self.VAO = glGenVertexArrays(1)
+        self.VBO = glGenBuffers(1)
+        self.EBO = glGenBuffers(1)  # Для индексированных данных, если необходимо
 
     @abstractmethod
-    def draw(self):
-        """Отрисовка фигуры."""
+    def setup_mesh(self):
+        """Настройка VAO, VBO, EBO для геометрии."""
         pass
 
     @abstractmethod
-    def draw_edges(self):
-        """Отрисовка рёбер фигуры."""
+    def draw_mesh(self, shader: Shader):
+        """Отрисовка геометрии с использованием шейдера."""
         pass
 
-    @staticmethod
-    def draw_center_axes(axis_length=0.2):
-        """Отрисовка осей координат в центре объекта."""
-        glBegin(GL_LINES)
-
-        # Ось X (красный)
-        glColor3f(1.0, 0.0, 0.0)  # Красный цвет для оси X
-        glVertex3f(0.0, 0.0, 0.0)
-        glVertex3f(axis_length, 0.0, 0.0)
-
-        # Ось Y (зелёный)
-        glColor3f(0.0, 1.0, 0.0)  # Зелёный цвет для оси Y
-        glVertex3f(0.0, 0.0, 0.0)
-        glVertex3f(0.0, axis_length, 0.0)
-
-        # Ось Z (синий)
-        glColor3f(0.0, 0.0, 1.0)  # Синий цвет для оси Z
-        glVertex3f(0.0, 0.0, 0.0)
-        glVertex3f(0.0, 0.0, axis_length)
-
-        glEnd()
-
-    def render(self):
+    def render(self, shader: Shader):
         """Отрисовка фигуры с применением трансформаций и материала."""
-        # Сохраняем текущую матрицу
-        glPushMatrix()
-        # Применяем трансформации объекта
-        glTranslatef(*self.position)
-        # Поворачиваем объект
-        glRotatef(self.rotation[0], 1.0, 0.0, 0.0)
-        glRotatef(self.rotation[1], 0.0, 1.0, 0.0)
-        glRotatef(self.rotation[2], 0.0, 0.0, 1.0)
-        # Масштабируем объект
-        glScalef(self.scale, self.scale, self.scale)
+        # Создаем матрицу модели
+        model = glm.mat4(1.0)
+        model = glm.translate(model, glm.vec3(*self.position))
+        model = glm.rotate(model, glm.radians(self.rotation[0]), glm.vec3(1.0, 0.0, 0.0))
+        model = glm.rotate(model, glm.radians(self.rotation[1]), glm.vec3(0.0, 1.0, 0.0))
+        model = glm.rotate(model, glm.radians(self.rotation[2]), glm.vec3(0.0, 0.0, 1.0))
+        model = glm.scale(model, glm.vec3(self.scale))
 
-        self.material.apply()  # Применение материала
-        self.draw()  # Отрисовка объекта
-        self.material.cleanup()  # Очистка после рендеринга
+        shader.set_mat4("model", model)
 
-        # Отрисовка осей координат в центре объекта
-        self.draw_center_axes()
+        # Применяем материал
+        self.material.apply(shader)
 
-        # Восстанавливаем матрицу
-        glPopMatrix()
+        # Отрисовка геометрии
+        self.draw_mesh(shader)
+
+        # Очистка материала
+        self.material.cleanup(shader)

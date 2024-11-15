@@ -1,4 +1,7 @@
-from OpenGL.GLUT import *
+# handlers.py
+import glm
+
+from OpenGL.raw.GLUT import glutWarpPointer
 from lab3.camera import Camera
 
 # Используем глобальный словарь для отслеживания нажатых клавиш
@@ -15,6 +18,7 @@ keys = {
 toggle_pressed = {
     't': False
 }
+
 # Начальные значения для мыши
 last_x, last_y = 400, 300
 first_mouse = True
@@ -24,83 +28,111 @@ first_mouse = True
 def key_pressed(key, x, y):
     """Обработка нажатий клавиш."""
     global keys, toggle_pressed
-    if key == b'w':
+    key = key.decode('utf-8').lower()
+    if key == 'w':
         keys['w'] = True
-    elif key == b'a':
+    elif key == 'a':
         keys['a'] = True
-    elif key == b's':
+    elif key == 's':
         keys['s'] = True
-    elif key == b'd':
+    elif key == 'd':
         keys['d'] = True
-    elif key == b'c':
+    elif key == 'c':
         keys['c'] = True  # Спуск камеры
-    elif key == b' ':  # Пробел
-        keys[' '] = True  # Подъём камеры
-    elif key == b't' and not toggle_pressed['t']:
-        # Переключаем шейдер только при первом нажатии клавиши 't'
+    elif key == ' ':
+        keys[' '] = True  # Подъём камеры вверх
+    elif key == 't' and not toggle_pressed['t']:
+        # Переключаем шейдер или теневую опцию
         toggle_pressed['t'] = True
+        # Здесь можно добавить логику переключения теней
+        print("Toggle shadows")  # Пример действия
 
 
 # Обработка отпусканий клавиш
 def key_released(key, x, y):
     """Обработка отпусканий клавиш."""
     global keys, toggle_pressed
-    if key == b'w':
+    key = key.decode('utf-8').lower()
+    if key == 'w':
         keys['w'] = False
-    elif key == b'a':
+    elif key == 'a':
         keys['a'] = False
-    elif key == b's':
+    elif key == 's':
         keys['s'] = False
-    elif key == b'd':
+    elif key == 'd':
         keys['d'] = False
-    elif key == b'c':
+    elif key == 'c':
         keys['c'] = False  # Остановка спуска
-    elif key == b' ':  # Пробел
-        keys[' '] = False  # Остановка подъёма
-    elif key == b't':
+    elif key == ' ':
+        keys[' '] = False  # Остановка подъёма камеры вверх
+    elif key == 't':
         toggle_pressed['t'] = False  # Сбрасываем флаг переключения
 
 
 # Обработка движения камеры
-def handle_camera_movement(camera: Camera):
+def handle_camera_movement(camera: Camera, delta_time=0.016):
     """Движение камеры на основе нажатых клавиш."""
+    move_direction = glm.vec3(0.0, 0.0, 0.0)
+
     if keys['w']:
-        camera.move_forward()
+        move_direction += camera.front  # Вперёд
     if keys['s']:
-        camera.move_backward()
+        move_direction -= camera.front  # Назад
     if keys['a']:
-        camera.move_left()
+        move_direction -= camera.right  # Влево
     if keys['d']:
-        camera.move_right()
-    if keys['c']:
-        camera.move_down()  # Спуск камеры вниз
+        move_direction += camera.right  # Вправо
     if keys[' ']:
-        camera.move_up()  # Подъём камеры вверх
+        move_direction += camera.world_up  # Вверх
+    if keys['c']:
+        move_direction -= camera.world_up  # Вниз
+
+    # Нормализация вектора движения, чтобы скорость оставалась постоянной
+    if glm.length(move_direction) > 0:
+        move_direction = glm.normalize(move_direction)
+
+    # Применение движения к позиции камеры
+    camera.position += move_direction * camera.speed * delta_time
 
 
 # Создание обработчика движения мыши
-def create_mouse_movement_handler(camera):
+def create_mouse_movement_handler(camera, get_window_size):
     """Создаём замыкание для обработки движения мыши с использованием камеры."""
-    last_x, last_y = 400, 300
+    last_x, last_y = 0, 0
     first_mouse = True
 
     def mouse_movement(x, y):
         nonlocal last_x, last_y, first_mouse
 
-        center_x, center_y = 400, 300
+        # Получаем текущие размеры окна
+        window_width, window_height = get_window_size()
+
+        # Центр окна
+        center_x = window_width // 2
+        center_y = window_height // 2
 
         if first_mouse:
             last_x, last_y = x, y
             first_mouse = False
 
+        # Вычисляем смещение
         x_offset = x - last_x
         y_offset = last_y - y  # Инвертируем Y
 
-        last_x, last_y = center_x, center_y  # Перемещаем указатель мыши в центр
+        # Сохраняем текущую позицию для следующего шага
+        last_x, last_y = x, y
 
-        camera.rotate(x_offset, y_offset)
+        # Передаём смещение в камеру
+        camera.process_mouse_movement(x_offset, y_offset)
 
-        # Возвращаем указатель мыши в центр окна
+        # Возвращаем курсор в центр окна
         glutWarpPointer(center_x, center_y)
+        last_x, last_y = center_x, center_y  # Сбрасываем координаты в центр
 
     return mouse_movement
+
+
+def reset_mouse_position(window_width, window_height):
+    """Возвращает мышь в центр окна."""
+    center_x, center_y = window_width // 2, window_height // 2
+    glutWarpPointer(center_x, center_y)

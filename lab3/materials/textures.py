@@ -1,5 +1,8 @@
-from OpenGL.GL import *
+# textures.py
+import numpy as np
 from PIL import Image
+
+from OpenGL.GL import *
 
 
 class Texture:
@@ -10,23 +13,28 @@ class Texture:
     def load(self):
         """Загружаем текстуру и привязываем её к объекту OpenGL."""
         image = Image.open(self.texture_path)
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)  # Переворот изображения для корректного отображения
 
-        # Проверка на наличие альфа-канала
+        img_data = np.array(image, dtype=np.uint8)
+
         if image.mode == "RGBA":
-            img_data = image.tobytes("raw", "RGBA", 0, -1)
             format = GL_RGBA
-        else:
-            img_data = image.tobytes("raw", "RGB", 0, -1)
+        elif image.mode == "RGB":
             format = GL_RGB
+        else:
+            raise ValueError("Unsupported image format")
 
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
         glTexImage2D(GL_TEXTURE_2D, 0, format, image.width, image.height, 0, format, GL_UNSIGNED_BYTE, img_data)
+        glGenerateMipmap(GL_TEXTURE_2D)
 
-        # Устанавливаем параметры фильтрации текстуры
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        # Установка параметров текстуры
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glEnable(GL_TEXTURE_2D)
 
-    def apply(self):
-        """Применение текстуры."""
+    def bind(self, unit=0):
+        """Привязка текстуры к текстурному блоку."""
+        glActiveTexture(GL_TEXTURE0 + unit)
         glBindTexture(GL_TEXTURE_2D, self.texture_id)

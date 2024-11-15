@@ -4,19 +4,20 @@ from lab3.materials.textures import Texture
 from lab3.render_window import RenderWindow
 from lab3.scene import Scene
 from lab3.shapes.cube import Cube
+from lab3.shapes.plane import Plane
 from light.point_light import PointLight
 from materials.material import Material
-from shapes.teapot import Teapot
 
 
 def main():
-    window = RenderWindow(800, 600, b"Lab 3")
+    # Создаем окно рендеринга
+    window = RenderWindow(800, 600, b"Lab 3 with Shadows")
 
     # Создаем сцену
     scene = Scene()
 
     # Создаем камеру
-    camera = Camera([0.0, 0.0, 5.0], [0.0, 1.0, 0.0], -90.0, 0.0)
+    camera = Camera(position=[0.0, 2.0, 5.0], up=[0.0, 1.0, 0.0], yaw=-90.0, pitch=-20.0)
     scene.set_camera(camera)
 
     # Загрузка текстуры для текстурированного куба
@@ -24,79 +25,52 @@ def main():
     texture.load()
 
     # Источник света - точечный свет
-    point_light = PointLight(position=[0.0, 5.0, 5.0, 1.0],
-                             ambient=[0.05, 0.05, 0.05, 1.0],  # Слабое фоновое освещение [R, G, B, A]
-                             diffuse=[2.0, 2.0, 2.0, 2.0],  # Яркий рассеянный свет [R, G, B, A]
-                             specular=[2.0, 2.0, 2.0, 2.0],  # Яркий зеркальный свет [R, G, B, A]
-                             attenuation=[1.0, 0.1, 0.01])  # Затухание света [Константа, Линейная, Квадратичная]
+    point_light = PointLight(position=[0.0, 5.0, 5.0],
+                             ambient=[0.05, 0.05, 0.05],
+                             diffuse=[1.0, 1.0, 1.0],
+                             specular=[1.0, 1.0, 1.0],
+                             attenuation=[1.0, 0.09, 0.032])
     scene.add_light(point_light)
 
-    # Создаем материалы с использованием нового класса Material
-    transparent_material = Material(
-        color=[0.8, 0.0, 0.0, 0.5],  # Красный с прозрачностью 0.5
-        shininess=30,
-        specular=[1.0, 1.0, 1.0, 1.0],
-        diffuse=[0.8, 0.0, 0.0, 0.5],  # Диффузный красный цвет с альфа 0.5
-        transparent=True  # Включение прозрачности
+    # Создаем материал для пола
+    floor_material = Material(
+        ambient=[0.1, 0.1, 0.1],
+        diffuse=[0.5, 0.5, 0.5],
+        specular=[0.2, 0.2, 0.2],
+        shininess=10.0,
+        texture=None,
+        transparent=False
     )
 
-    # Полированный материал для тороидального объекта
-    polished_material = Material(
-        color=[0.2, 0.2, 0.6, 1.0],  # Голубой цвет
-        shininess=128,
-        specular=[2.0, 2.0, 2.0, 1.0],
-        diffuse=[0.4, 0.4, 0.4, 1.0],
-    )
+    # Создаем объект плоскости
+    floor = Plane(position=[0.0, 0.0, 0.0], scale=10.0, rotation=[0.0, 0.0, 0.0], material=floor_material)
+    scene.add_object(floor)
 
-    # Матовый материал для объектов с текстурой
-    diffuse_material = Material(
-        # Жёлтый
-        color=[0.8, 0.8, 0.0, 1.0],
-        shininess=10,
-        specular=[0.1, 0.1, 0.1, 1.0],
-        diffuse=[0.6, 0.6, 0.6, 1.0]
-    )
-
-    # Матовый материал для фона
-    background_material = Material(
-        color=[0.1, 0.1, 0.1, 1.0],
-        shininess=10,
-        specular=[0.1, 0.1, 0.1, 1.0],
-        diffuse=[0.1, 0.1, 0.1, 1.0]
-    )
-
-    # Создаем объекты и применяем материалы
-
-    # Объект комнаты с матовым материалом
-    room = Cube(position=[0.0, 9.0, 0.0], scale=20.0, material=background_material)
-    scene.add_object(room)
-
-    # Создаем текстурированный куб с матовым материалом
+    # Создаем текстурированный куб
     textured_cube_material = Material(
-        color=[1.0, 1.0, 1.0, 0.0],
-        shininess=10,
-        specular=[0.1, 0.1, 0.1, 1.0],
-        diffuse=[0.8, 0.8, 0.8, 1.0],
+        ambient=[0.1, 0.1, 0.1],
+        diffuse=[0.8, 0.8, 0.8],
+        specular=[0.5, 0.5, 0.5],
+        shininess=32.0,
         texture=texture.texture_id,
-        transparent=True)
-
-    textured_cube = Cube(position=[1.0, 1.0, -5.0], scale=2.0, material=textured_cube_material)
+        transparent=True
+    )
+    textured_cube = Cube(position=[1.0, 1.0, -5.0], scale=2.0, rotation=[0.0, 0.0, 0.0],
+                         material=textured_cube_material)
     scene.add_object(textured_cube)
 
-    # Полированный голубой чайник
-    polished_teapot = Teapot(position=[-3.0, 0.0, 0.0], scale=1.0, material=polished_material)
-    scene.add_object(polished_teapot)
+    # Создаем матовый куб
+    cube_material = Material(
+        ambient=[0.1, 0.1, 0.1],
+        diffuse=[0.8, 0.8, 0.8],
+        specular=[0.5, 0.5, 0.5],
+        shininess=32.0,
+        texture=None,
+        transparent=False
+    )
 
-    # Прозрачный розовый чайник
-    transparent_teapot = Teapot(
-        position=[0.0, 0.0, 0.0],
-        scale=1.0,
-        material=transparent_material)
-    scene.add_object(transparent_teapot)
-
-    # Матовый желтый чайник
-    matte_teapot = Teapot(position=[3.0, 0.0, 0.0], scale=1.0, material=diffuse_material)
-    scene.add_object(matte_teapot)
+    cube = Cube(position=[-1.0, 1.0, -5.0], scale=2.0, rotation=[0.0, 0.0, 0.0], material=cube_material)
+    scene.add_object(cube)
 
     # Создаем анимацию вращения источника света
     light_rotation_animation = LightRotationAnimation(point_light, radius=5.0, speed=30.0)
@@ -105,7 +79,10 @@ def main():
     # Добавляем анимацию в сцену
     scene.add_animation(light_rotation_animation)
 
+    # Устанавливаем сцену в окно рендеринга
     window.set_scene(scene)
+
+    # Запускаем рендеринг
     window.run()
 
 
