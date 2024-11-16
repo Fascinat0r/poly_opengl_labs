@@ -32,11 +32,12 @@ class Material:
         shader.set_float("material.shininess", self.shininess)
 
         if self.texture:
-            shader.set_int("diffuseTexture", 0)  # Текстура в текстурном блоке 0
+            shader.set_int("diffuseTexture", 0)
             gl.glActiveTexture(gl.GL_TEXTURE0)
             gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture)
         else:
-            gl.glBindTexture(gl.GL_TEXTURE_2D, 0)
+            shader.set_int("diffuseTexture", 0)
+            gl.glBindTexture(gl.GL_TEXTURE_2D, 0)  # Отключаем текстуру
 
     def cleanup(self, shader: Shader):
         """Очистка текстуры после рендеринга."""

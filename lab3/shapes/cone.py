@@ -1,7 +1,5 @@
 import math
-
 from OpenGL.GL import *
-
 from lab3.shapes.shape import Shape
 
 
@@ -9,78 +7,58 @@ class Cone(Shape):
     def __init__(self, base_radius=1.0, height=2.0, slices=30, position=[0.0, 0.0, 0.0], scale=1.0,
                  rotation=[0.0, 0.0, 0.0], material=None):
         super().__init__(position, scale, rotation, material=material)
-        self.base_radius = base_radius  # Радиус основания конуса
-        self.height = height  # Высота конуса
-        self.slices = slices  # Количество сегментов по окружности
+        self.base_radius = base_radius
+        self.height = height
+        self.slices = slices
+        self.setup_mesh()
 
-    def draw(self):
-        """Отрисовка поверхности конуса с заданным цветом."""
-        # glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
-        self.draw_surface()
-
-    def draw_edges(self):
-        """Отрисовка каркасных рёбер конуса."""
-        glColor3f(0.0, 0.0, 0.0)  # Цвет рёбер — чёрный
-        self.draw_wireframe()
-
-    def draw_surface(self):
-        """Рисуем поверхность конуса."""
-        glBegin(GL_TRIANGLES)
+    def setup_mesh(self):
+        """Создаём данные для конуса: вершины и индексы."""
+        self.vertices = []
+        self.indices = []
 
         # Вершина конуса
-        tip = [0.0, self.height, 0.0]
+        tip_index = 0
+        self.vertices.extend([0.0, self.height, 0.0])
 
-        # Отрисовка боковых поверхностей
+        # Базовые вершины
         for i in range(self.slices):
-            theta = 2.0 * math.pi * i / self.slices
-            next_theta = 2.0 * math.pi * (i + 1) / self.slices
-
-            # Треугольники для боковой поверхности
-            x1 = self.base_radius * math.cos(theta)
-            z1 = self.base_radius * math.sin(theta)
-            x2 = self.base_radius * math.cos(next_theta)
-            z2 = self.base_radius * math.sin(next_theta)
-
-            glVertex3f(tip[0], tip[1], tip[2])  # Вершина конуса
-            glVertex3f(x1, 0.0, z1)  # Точка на основании
-            glVertex3f(x2, 0.0, z2)  # Следующая точка на основании
-
-        glEnd()
-
-        # Основание конуса
-        glBegin(GL_TRIANGLE_FAN)
-        glVertex3f(0.0, 0.0, 0.0)  # Центр основания
-        for i in range(self.slices + 1):
             theta = 2.0 * math.pi * i / self.slices
             x = self.base_radius * math.cos(theta)
             z = self.base_radius * math.sin(theta)
-            glVertex3f(x, 0.0, z)
-        glEnd()
+            self.vertices.extend([x, 0.0, z])
 
-    def draw_wireframe(self):
-        """Рисуем каркас конуса (линии по рёбрам)."""
-        glBegin(GL_LINES)
+        # Индексы боковых граней
+        for i in range(1, self.slices + 1):
+            next_i = 1 if i == self.slices else i + 1
+            self.indices.extend([tip_index, i, next_i])
 
-        # Вершина конуса
-        tip = [0.0, self.height, 0.0]
+        # Индексы основания
+        center_index = len(self.vertices) // 3
+        self.vertices.extend([0.0, 0.0, 0.0])  # Центр основания
+        for i in range(1, self.slices + 1):
+            next_i = 1 if i == self.slices else i + 1
+            self.indices.extend([center_index, next_i, i])
 
-        # Рёбра от вершины до основания
-        for i in range(self.slices):
-            theta = 2.0 * math.pi * i / self.slices
-            next_theta = 2.0 * math.pi * (i + 1) / self.slices
+        self.vertices = (GLfloat * len(self.vertices))(*self.vertices)
+        self.indices = (GLuint * len(self.indices))(*self.indices)
 
-            # Вершины на основании
-            x1 = self.base_radius * math.cos(theta)
-            z1 = self.base_radius * math.sin(theta)
-            x2 = self.base_radius * math.cos(next_theta)
-            z2 = self.base_radius * math.sin(next_theta)
+    def draw_mesh(self, shader):
+        """Отрисовка конуса."""
+        glBindVertexArray(self.VAO)
 
-            # Линии от вершины к основанию
-            glVertex3f(tip[0], tip[1], tip[2])
-            glVertex3f(x1, 0.0, z1)
+        # VBO
+        glBindBuffer(GL_ARRAY_BUFFER, self.VBO)
+        glBufferData(GL_ARRAY_BUFFER, self.vertices, GL_STATIC_DRAW)
 
-            # Линии по основанию
-            glVertex3f(x1, 0.0, z1)
-            glVertex3f(x2, 0.0, z2)
+        # EBO
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.EBO)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, self.indices, GL_STATIC_DRAW)
 
-        glEnd()
+        # Настройка атрибутов вершин
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), None)
+        glEnableVertexAttribArray(0)
+
+        # Отрисовка
+        glDrawElements(GL_TRIANGLES, len(self.indices), GL_UNSIGNED_INT, None)
+        glBindVertexArray(0)

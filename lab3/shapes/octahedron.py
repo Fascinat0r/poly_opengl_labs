@@ -1,90 +1,53 @@
 from OpenGL.GL import *
-
 from lab3.shapes.shape import Shape
 
 
 class Octahedron(Shape):
-    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, rotation=[0.0, 0.0, 0.0],
-                 material=None):
-        super().__init__(position, scale, rotation, material=material)
+    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, rotation=[0.0, 0.0, 0.0], material=None):
+        super().__init__(position, scale, rotation, material)
+        self.setup_mesh()
 
-    def draw(self):
-        """Отрисовка октаэдра с заданным цветом."""
-        glPushMatrix()  # Сохраняем текущее состояние матрицы
-        glTranslatef(self.position[0], self.position[1], self.position[2])  # Перемещаем октаэдр
-        glScalef(self.scale, self.scale, self.scale)  # Масштабируем октаэдр
-        # glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
+    def setup_mesh(self):
+        """Создаём данные для октаэдра: вершины и индексы."""
+        self.vertices = [
+            0.0, 1.0, 0.0,  # Top vertex
+            1.0, 0.0, 0.0,  # Right
+            0.0, 0.0, 1.0,  # Front
+            -1.0, 0.0, 0.0,  # Left
+            0.0, 0.0, -1.0,  # Back
+            0.0, -1.0, 0.0,  # Bottom vertex
+        ]
 
-        glBegin(GL_TRIANGLES)
+        self.indices = [
+            0, 1, 2,
+            0, 2, 3,
+            0, 3, 4,
+            0, 4, 1,
+            5, 2, 1,
+            5, 3, 2,
+            5, 4, 3,
+            5, 1, 4
+        ]
 
-        # Вершины октаэдра
-        v0 = [0.0, 1.0, 0.0]
-        v1 = [1.0, 0.0, 0.0]
-        v2 = [0.0, 0.0, 1.0]
-        v3 = [-1.0, 0.0, 0.0]
-        v4 = [0.0, 0.0, -1.0]
-        v5 = [0.0, -1.0, 0.0]
+        self.vertices = (GLfloat * len(self.vertices))(*self.vertices)
+        self.indices = (GLuint * len(self.indices))(*self.indices)
 
-        # Верхняя пирамида
-        self.draw_triangle(v0, v1, v2)
-        self.draw_triangle(v0, v2, v3)
-        self.draw_triangle(v0, v3, v4)
-        self.draw_triangle(v0, v4, v1)
+    def draw_mesh(self, shader):
+        """Отрисовка октаэдра."""
+        glBindVertexArray(self.VAO)
 
-        # Нижняя пирамида
-        self.draw_triangle(v5, v1, v2)
-        self.draw_triangle(v5, v2, v3)
-        self.draw_triangle(v5, v3, v4)
-        self.draw_triangle(v5, v4, v1)
+        # VBO
+        glBindBuffer(GL_ARRAY_BUFFER, self.VBO)
+        glBufferData(GL_ARRAY_BUFFER, self.vertices, GL_STATIC_DRAW)
 
-        glEnd()
-        glPopMatrix()
+        # EBO
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.EBO)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, self.indices, GL_STATIC_DRAW)
 
-    def draw_edges(self):
-        """Отрисовка рёбер октаэдра (контуров)."""
-        glPushMatrix()
-        glTranslatef(self.position[0], self.position[1], self.position[2])
-        glScalef(self.scale, self.scale, self.scale)
-        glColor3f(0.0, 0.0, 0.0)  # Цвет рёбер — черный
+        # Настройка атрибутов вершин
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), None)
+        glEnableVertexAttribArray(0)
 
-        glBegin(GL_LINES)
-
-        # Вершины октаэдра
-        v0 = [0.0, 1.0, 0.0]
-        v1 = [1.0, 0.0, 0.0]
-        v2 = [0.0, 0.0, 1.0]
-        v3 = [-1.0, 0.0, 0.0]
-        v4 = [0.0, 0.0, -1.0]
-        v5 = [0.0, -1.0, 0.0]
-
-        # Верхняя пирамида
-        self.draw_line(v0, v1)
-        self.draw_line(v0, v2)
-        self.draw_line(v0, v3)
-        self.draw_line(v0, v4)
-
-        # Нижняя пирамида
-        self.draw_line(v5, v1)
-        self.draw_line(v5, v2)
-        self.draw_line(v5, v3)
-        self.draw_line(v5, v4)
-
-        # Соединяем вершины
-        self.draw_line(v1, v2)
-        self.draw_line(v2, v3)
-        self.draw_line(v3, v4)
-        self.draw_line(v4, v1)
-
-        glEnd()
-        glPopMatrix()
-
-    def draw_triangle(self, v1, v2, v3):
-        """Отрисовка одного треугольника."""
-        glVertex3fv(v1)
-        glVertex3fv(v2)
-        glVertex3fv(v3)
-
-    def draw_line(self, v1, v2):
-        """Отрисовка одного ребра."""
-        glVertex3fv(v1)
-        glVertex3fv(v2)
+        # Отрисовка
+        glDrawElements(GL_TRIANGLES, len(self.indices), GL_UNSIGNED_INT, None)
+        glBindVertexArray(0)
