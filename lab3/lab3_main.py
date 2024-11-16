@@ -7,6 +7,7 @@ from lab3.render_window import RenderWindow
 from lab3.scene import Scene
 from lab3.shapes.cone import Cone
 from lab3.shapes.cube import Cube
+from lab3.shapes.dragon import Dragon
 from lab3.shapes.octahedron import Octahedron
 from lab3.shapes.plane import Plane
 from lab3.shapes.teapot import Teapot
@@ -95,12 +96,15 @@ def main():
     octahedron = Octahedron(position=[0.0, 1.5, -3.0], scale=1.0, rotation=[0.0, 45.0, 0.0], material=plastic_material)
     scene.add_object(octahedron)
 
-    teapot = Teapot(position=[3.0, 1.0, -4.0], scale=1.0, rotation=[0.0, 0.0, 0.0], material=plastic_material)
+    teapot = Teapot(position=[3.0, 0.5, -4.0], scale=0.02, rotation=[-90.0, 0.0, 0.0], material=plastic_material)
     scene.add_object(teapot)
 
     torus = Torus(inner_radius=0.5, outer_radius=1.0, rings=30, sides=30, position=[-3.0, 1.0, -8.0],
                   scale=1.0, rotation=[0.0, 0.0, 0.0], material=plastic_material)
     scene.add_object(torus)
+
+    dragon = Dragon(position=[-3.0, 10.0, -30.0], scale=0.1, rotation=[0.0, 180.0, 0.0], material=plastic_material)
+    scene.add_object(dragon)
 
     # Устанавливаем сцену в окно рендеринга
     window.set_scene(scene)
