@@ -1,17 +1,15 @@
-# handlers.py
 import glm
-
 from OpenGL.raw.GLUT import glutWarpPointer
 from lab3.camera import Camera
 
-# Используем глобальный словарь для отслеживания нажатых клавиш
+# Используем глобальный словарь для отслеживания нажатых клавиш (по keycode)
 keys = {
-    'w': False,
-    'a': False,
-    's': False,
-    'd': False,
-    'c': False,  # Для спуска вниз
-    ' ': False,  # Для подъёма вверх (пробел)
+    119: False,  # W
+    97: False,   # A
+    115: False,  # S
+    100: False,  # D
+    99: False,   # C (спуск вниз)
+    32: False,   # SPACE (подъем вверх)
 }
 
 # Отдельный флаг для отслеживания состояния переключения теней
@@ -28,23 +26,12 @@ first_mouse = True
 def key_pressed(key, x, y):
     """Обработка нажатий клавиш."""
     global keys, toggle_pressed
-    key = key.decode('utf-8').lower()
-    if key == 'w':
-        keys['w'] = True
-    elif key == 'a':
-        keys['a'] = True
-    elif key == 's':
-        keys['s'] = True
-    elif key == 'd':
-        keys['d'] = True
-    elif key == 'c':
-        keys['c'] = True  # Спуск камеры
-    elif key == ' ':
-        keys[' '] = True  # Подъём камеры вверх
-    elif key == 't' and not toggle_pressed['t']:
+    keycode = ord(key)
+    if keycode in keys:
+        keys[keycode] = True
+    elif keycode == ord('t') and not toggle_pressed['t']:
         # Переключаем шейдер или теневую опцию
         toggle_pressed['t'] = True
-        # Здесь можно добавить логику переключения теней
         print("Toggle shadows")  # Пример действия
 
 
@@ -52,20 +39,10 @@ def key_pressed(key, x, y):
 def key_released(key, x, y):
     """Обработка отпусканий клавиш."""
     global keys, toggle_pressed
-    key = key.decode('utf-8').lower()
-    if key == 'w':
-        keys['w'] = False
-    elif key == 'a':
-        keys['a'] = False
-    elif key == 's':
-        keys['s'] = False
-    elif key == 'd':
-        keys['d'] = False
-    elif key == 'c':
-        keys['c'] = False  # Остановка спуска
-    elif key == ' ':
-        keys[' '] = False  # Остановка подъёма камеры вверх
-    elif key == 't':
+    keycode = ord(key)
+    if keycode in keys:
+        keys[keycode] = False
+    elif keycode == ord('t'):
         toggle_pressed['t'] = False  # Сбрасываем флаг переключения
 
 
@@ -74,17 +51,17 @@ def handle_camera_movement(camera: Camera, delta_time=0.016):
     """Движение камеры на основе нажатых клавиш."""
     move_direction = glm.vec3(0.0, 0.0, 0.0)
 
-    if keys['w']:
+    if keys[119]:  # W
         move_direction += camera.front  # Вперёд
-    if keys['s']:
+    if keys[115]:  # S
         move_direction -= camera.front  # Назад
-    if keys['a']:
+    if keys[97]:   # A
         move_direction -= camera.right  # Влево
-    if keys['d']:
+    if keys[100]:  # D
         move_direction += camera.right  # Вправо
-    if keys[' ']:
+    if keys[32]:   # SPACE
         move_direction += camera.world_up  # Вверх
-    if keys['c']:
+    if keys[99]:   # C
         move_direction -= camera.world_up  # Вниз
 
     # Нормализация вектора движения, чтобы скорость оставалась постоянной
