@@ -25,8 +25,8 @@ class RenderWindow:
         glutCreateWindow(self.title)
 
         # Инициализация шейдеров
-        self.shader = Shader("./shaders/shading.vert", "./shaders/shading.frag")
-        self.depth_shader = Shader("./shaders/depth.vert", "./shaders/depth.frag")
+        self.shader = Shader("../data/shaders/shading.vert", "../data/shaders/shading.frag")
+        self.depth_shader = Shader("../data/shaders/depth.vert", "../data/shaders/depth.frag")
 
         # Включаем режим теста глубины
         glEnable(GL_DEPTH_TEST)
