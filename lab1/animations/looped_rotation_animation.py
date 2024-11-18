@@ -1,4 +1,4 @@
-from lab2.animations.animation import Animation
+from lab1.animations.animation import Animation
 
 
 class LoopedRotationAnimation(Animation):
