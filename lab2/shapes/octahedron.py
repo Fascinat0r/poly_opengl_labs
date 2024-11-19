@@ -1,6 +1,6 @@
 from OpenGL.GL import *
-
 from lab2.shapes.shape import Shape
+from lab2.shapes.utils import draw_edge, draw_triangle
 
 
 class Octahedron(Shape):
@@ -9,82 +9,66 @@ class Octahedron(Shape):
         super().__init__(position, scale, rotation, material=material)
 
     def draw(self):
-        """Отрисовка октаэдра с заданным цветом."""
-        glPushMatrix()  # Сохраняем текущее состояние матрицы
-        glTranslatef(self.position[0], self.position[1], self.position[2])  # Перемещаем октаэдр
-        glScalef(self.scale, self.scale, self.scale)  # Масштабируем октаэдр
-        # glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
+        """Отрисовка октаэдра с текстурой и нормалями для корректного освещения."""
+        glColor3f(1.0, 1.0, 1.0)  # Устанавливаем белый цвет для текстур
 
-        glBegin(GL_TRIANGLES)
-
-        # Вершины октаэдра
-        v0 = [0.0, 1.0, 0.0]
-        v1 = [1.0, 0.0, 0.0]
-        v2 = [0.0, 0.0, 1.0]
-        v3 = [-1.0, 0.0, 0.0]
-        v4 = [0.0, 0.0, -1.0]
-        v5 = [0.0, -1.0, 0.0]
+        # Координаты вершин октаэдра
+        v0 = [0.0, 0.5, 0.0]  # Верхняя вершина
+        v1 = [0.5, 0.0, 0.5]  # Передняя-правая вершина
+        v2 = [-0.5, 0.0, 0.5]  # Передняя-левая вершина
+        v3 = [-0.5, 0.0, -0.5]  # Задняя-левая вершина
+        v4 = [0.5, 0.0, -0.5]  # Задняя-правая вершина
+        v5 = [0.0, -0.5, 0.0]  # Нижняя вершина
 
         # Верхняя пирамида
-        self.draw_triangle(v0, v1, v2)
-        self.draw_triangle(v0, v2, v3)
-        self.draw_triangle(v0, v3, v4)
-        self.draw_triangle(v0, v4, v1)
+        glBegin(GL_TRIANGLES)
+        draw_triangle(v0, v1, v2, [0.0, 1.0, 0.0], [0.0, 0.0], [1.0, 0.0], [0.5, 1.0])  # Передняя грань
+        draw_triangle(v0, v2, v3, [0.0, 1.0, 0.0], [0.5, 1.0], [0.0, 0.0], [1.0, 0.0])  # Левая грань
+        draw_triangle(v0, v3, v4, [0.0, 1.0, 0.0], [1.0, 0.0], [0.5, 1.0], [0.0, 0.0])  # Задняя грань
+        draw_triangle(v0, v4, v1, [0.0, 1.0, 0.0], [0.0, 0.0], [1.0, 0.0], [0.5, 1.0])  # Правая грань
 
         # Нижняя пирамида
-        self.draw_triangle(v5, v1, v2)
-        self.draw_triangle(v5, v2, v3)
-        self.draw_triangle(v5, v3, v4)
-        self.draw_triangle(v5, v4, v1)
+        draw_triangle(v5, v1, v2, [0.0, -1.0, 0.0], [0.0, 0.0], [1.0, 0.0], [0.5, 1.0])  # Передняя грань
+        draw_triangle(v5, v2, v3, [0.0, -1.0, 0.0], [0.5, 1.0], [0.0, 0.0], [1.0, 0.0])  # Левая грань
+        draw_triangle(v5, v3, v4, [0.0, -1.0, 0.0], [1.0, 0.0], [0.5, 1.0], [0.0, 0.0])  # Задняя грань
+        draw_triangle(v5, v4, v1, [0.0, -1.0, 0.0], [0.0, 0.0], [1.0, 0.0], [0.5, 1.0])  # Правая грань
 
         glEnd()
-        glPopMatrix()
 
     def draw_edges(self):
-        """Отрисовка рёбер октаэдра (контуров)."""
+        """Отрисовка рёбер куба (контуров)."""
         glPushMatrix()
-        glTranslatef(self.position[0], self.position[1], self.position[2])
-        glScalef(self.scale, self.scale, self.scale)
-        glColor3f(0.0, 0.0, 0.0)  # Цвет рёбер — черный
+        glColor3f(0.0, 0.0, 0.0)  # Чёрный цвет для рёбер
+
+        # Координаты вершин куба
+        v0 = [-0.5, -0.5, -0.5]
+        v1 = [0.5, -0.5, -0.5]
+        v2 = [0.5, 0.5, -0.5]
+        v3 = [-0.5, 0.5, -0.5]
+        v4 = [-0.5, -0.5, 0.5]
+        v5 = [0.5, -0.5, 0.5]
+        v6 = [0.5, 0.5, 0.5]
+        v7 = [-0.5, 0.5, 0.5]
 
         glBegin(GL_LINES)
 
-        # Вершины октаэдра
-        v0 = [0.0, 1.0, 0.0]
-        v1 = [1.0, 0.0, 0.0]
-        v2 = [0.0, 0.0, 1.0]
-        v3 = [-1.0, 0.0, 0.0]
-        v4 = [0.0, 0.0, -1.0]
-        v5 = [0.0, -1.0, 0.0]
+        # Рёбра передней грани
+        draw_edge(v4, v5)
+        draw_edge(v5, v6)
+        draw_edge(v6, v7)
+        draw_edge(v7, v4)
 
-        # Верхняя пирамида
-        self.draw_line(v0, v1)
-        self.draw_line(v0, v2)
-        self.draw_line(v0, v3)
-        self.draw_line(v0, v4)
+        # Рёбра задней грани
+        draw_edge(v0, v1)
+        draw_edge(v1, v2)
+        draw_edge(v2, v3)
+        draw_edge(v3, v0)
 
-        # Нижняя пирамида
-        self.draw_line(v5, v1)
-        self.draw_line(v5, v2)
-        self.draw_line(v5, v3)
-        self.draw_line(v5, v4)
-
-        # Соединяем вершины
-        self.draw_line(v1, v2)
-        self.draw_line(v2, v3)
-        self.draw_line(v3, v4)
-        self.draw_line(v4, v1)
+        # Соединительные рёбра
+        draw_edge(v0, v4)
+        draw_edge(v1, v5)
+        draw_edge(v2, v6)
+        draw_edge(v3, v7)
 
         glEnd()
         glPopMatrix()
-
-    def draw_triangle(self, v1, v2, v3):
-        """Отрисовка одного треугольника."""
-        glVertex3fv(v1)
-        glVertex3fv(v2)
-        glVertex3fv(v3)
-
-    def draw_line(self, v1, v2):
-        """Отрисовка одного ребра."""
-        glVertex3fv(v1)
-        glVertex3fv(v2)

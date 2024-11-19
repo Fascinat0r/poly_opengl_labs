@@ -3,6 +3,7 @@ import math
 from OpenGL.GL import *
 
 from lab2.shapes.shape import Shape
+from lab2.shapes.utils import draw_triangle, draw_edge
 
 
 class Cone(Shape):
@@ -14,8 +15,7 @@ class Cone(Shape):
         self.slices = slices  # Количество сегментов по окружности
 
     def draw(self):
-        """Отрисовка поверхности конуса с заданным цветом."""
-        # glColor3f(self.color[0], self.color[1], self.color[2])  # Устанавливаем цвет
+        """Отрисовка поверхности конуса."""
         self.draw_surface()
 
     def draw_edges(self):
@@ -35,25 +35,38 @@ class Cone(Shape):
             theta = 2.0 * math.pi * i / self.slices
             next_theta = 2.0 * math.pi * (i + 1) / self.slices
 
-            # Треугольники для боковой поверхности
+            # Вершины на основании
             x1 = self.base_radius * math.cos(theta)
             z1 = self.base_radius * math.sin(theta)
             x2 = self.base_radius * math.cos(next_theta)
             z2 = self.base_radius * math.sin(next_theta)
 
-            glVertex3f(tip[0], tip[1], tip[2])  # Вершина конуса
-            glVertex3f(x1, 0.0, z1)  # Точка на основании
-            glVertex3f(x2, 0.0, z2)  # Следующая точка на основании
+            # Нормаль для боковой поверхности
+            normal = [x1 + x2, self.height, z1 + z2]
+            length = math.sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2)
+            normal = [n / length for n in normal]
+
+            # Текстурные координаты
+            uv_tip = [0.5, 1.0]
+            uv1 = [i / self.slices, 0.0]
+            uv2 = [(i + 1) / self.slices, 0.0]
+
+            draw_triangle(tip, [x1, 0.0, z1], [x2, 0.0, z2], normal, uv_tip, uv1, uv2)
 
         glEnd()
 
         # Основание конуса
         glBegin(GL_TRIANGLE_FAN)
+        center_normal = [0.0, -1.0, 0.0]  # Нормаль для основания
+        glNormal3fv(center_normal)
+        glTexCoord2f(0.5, 0.5)
         glVertex3f(0.0, 0.0, 0.0)  # Центр основания
         for i in range(self.slices + 1):
             theta = 2.0 * math.pi * i / self.slices
             x = self.base_radius * math.cos(theta)
             z = self.base_radius * math.sin(theta)
+            uv = [0.5 + 0.5 * math.cos(theta), 0.5 + 0.5 * math.sin(theta)]
+            glTexCoord2f(*uv)
             glVertex3f(x, 0.0, z)
         glEnd()
 
@@ -76,11 +89,9 @@ class Cone(Shape):
             z2 = self.base_radius * math.sin(next_theta)
 
             # Линии от вершины к основанию
-            glVertex3f(tip[0], tip[1], tip[2])
-            glVertex3f(x1, 0.0, z1)
+            draw_edge(tip, [x1, 0.0, z1])
 
             # Линии по основанию
-            glVertex3f(x1, 0.0, z1)
-            glVertex3f(x2, 0.0, z2)
+            draw_edge([x1, 0.0, z1], [x2, 0.0, z2])
 
         glEnd()

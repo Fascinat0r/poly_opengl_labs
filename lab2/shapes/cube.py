@@ -1,6 +1,6 @@
 from OpenGL.GL import *
-
 from lab2.shapes.shape import Shape
+from lab2.shapes.utils import draw_quad, draw_edge, draw_triangle
 
 
 class Cube(Shape):
@@ -10,130 +10,75 @@ class Cube(Shape):
 
     def draw(self):
         """Отрисовка куба с текстурой и нормалями для корректного освещения."""
+        glColor3f(1.0, 1.0, 1.0)  # Устанавливаем белый цвет для текстур
 
-        #self.material.apply()  # Применение материала
+        # Координаты вершин куба
+        v0 = [-0.5, -0.5, -0.5]
+        v1 = [0.5, -0.5, -0.5]
+        v2 = [0.5, 0.5, -0.5]
+        v3 = [-0.5, 0.5, -0.5]
+        v4 = [-0.5, -0.5, 0.5]
+        v5 = [0.5, -0.5, 0.5]
+        v6 = [0.5, 0.5, 0.5]
+        v7 = [-0.5, 0.5, 0.5]
 
-        glColor3f(1.0, 1.0, 1.0)  # Устанавливаем белый цвет, чтобы не искажать текстуру
-
+        # Грани куба
         glBegin(GL_QUADS)
 
-        # Передняя грань с нормалью
-        glNormal3f(0.0, 0.0, 1.0)  # Нормаль для передней грани
-        glTexCoord2f(0.0, 0.0);
-        glVertex3f(-0.5, -0.5, 0.5)
-        glTexCoord2f(1.0, 0.0);
-        glVertex3f(0.5, -0.5, 0.5)
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(0.5, 0.5, 0.5)
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(-0.5, 0.5, 0.5)
+        # Передняя грань
+        draw_quad(v4, v5, v6, v7, [0.0, 0.0, 1.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0])
 
-        # Задняя грань с нормалью
-        glNormal3f(0.0, 0.0, -1.0)  # Нормаль для задней грани
-        glTexCoord2f(0.0, 0.0);
-        glVertex3f(-0.5, -0.5, -0.5)
-        glTexCoord2f(1.0, 0.0);
-        glVertex3f(0.5, -0.5, -0.5)
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(0.5, 0.5, -0.5)
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(-0.5, 0.5, -0.5)
+        # Задняя грань
+        draw_quad(v0, v1, v2, v3, [0.0, 0.0, -1.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0])
 
-        # Левая грань с нормалью
-        glNormal3f(-1.0, 0.0, 0.0)  # Нормаль для левой грани
-        glTexCoord2f(0.0, 0.0);
-        glVertex3f(-0.5, -0.5, -0.5)
-        glTexCoord2f(1.0, 0.0);
-        glVertex3f(-0.5, -0.5, 0.5)
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(-0.5, 0.5, 0.5)
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(-0.5, 0.5, -0.5)
+        # Левая грань
+        draw_quad(v0, v4, v7, v3, [-1.0, 0.0, 0.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0])
 
-        # Правая грань с нормалью
-        glNormal3f(1.0, 0.0, 0.0)  # Нормаль для правой грани
-        glTexCoord2f(0.0, 0.0);
-        glVertex3f(0.5, -0.5, -0.5)
-        glTexCoord2f(1.0, 0.0);
-        glVertex3f(0.5, -0.5, 0.5)
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(0.5, 0.5, 0.5)
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(0.5, 0.5, -0.5)
+        # Правая грань
+        draw_quad(v1, v5, v6, v2, [1.0, 0.0, 0.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0])
 
-        # Верхняя грань с нормалью
-        glNormal3f(0.0, 1.0, 0.0)  # Нормаль для верхней грани
-        glTexCoord2f(0.0, 0.0);
-        glVertex3f(-0.5, 0.5, -0.5)
-        glTexCoord2f(1.0, 0.0);
-        glVertex3f(-0.5, 0.5, 0.5)
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(0.5, 0.5, 0.5)
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(0.5, 0.5, -0.5)
+        # Верхняя грань
+        draw_quad(v3, v7, v6, v2, [0.0, 1.0, 0.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0])
 
-        # Нижняя грань с нормалью
-        glNormal3f(0.0, -1.0, 0.0)  # Нормаль для нижней грани
-        glTexCoord2f(0.0, 0.0);
-        glVertex3f(-0.5, -0.5, -0.5)
-        glTexCoord2f(1.0, 0.0);
-        glVertex3f(-0.5, -0.5, 0.5)
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(0.5, -0.5, 0.5)
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(0.5, -0.5, -0.5)
+        # Нижняя грань
+        draw_quad(v0, v4, v5, v1, [0.0, -1.0, 0.0], [0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0])
 
         glEnd()
-
-        # glDisable(GL_TEXTURE_2D)  # Отключаем текстурирование
-        # self.material.cleanup()  # Очистка после рендеринга
 
     def draw_edges(self):
         """Отрисовка рёбер куба (контуров)."""
         glPushMatrix()
-        glColor3f(0.0, 0.0, 0.0)  # Цвет рёбер — чёрный
+        glColor3f(0.0, 0.0, 0.0)  # Чёрный цвет для рёбер
+
+        # Координаты вершин куба
+        v0 = [-0.5, -0.5, -0.5]
+        v1 = [0.5, -0.5, -0.5]
+        v2 = [0.5, 0.5, -0.5]
+        v3 = [-0.5, 0.5, -0.5]
+        v4 = [-0.5, -0.5, 0.5]
+        v5 = [0.5, -0.5, 0.5]
+        v6 = [0.5, 0.5, 0.5]
+        v7 = [-0.5, 0.5, 0.5]
 
         glBegin(GL_LINES)
 
-        # Ребра куба с центром в (0, 0, 0)
-        # Передняя грань
-        glVertex3f(-0.5, -0.5, 0.5)
-        glVertex3f(0.5, -0.5, 0.5)
+        # Рёбра передней грани
+        draw_edge(v4, v5)
+        draw_edge(v5, v6)
+        draw_edge(v6, v7)
+        draw_edge(v7, v4)
 
-        glVertex3f(0.5, -0.5, 0.5)
-        glVertex3f(0.5, 0.5, 0.5)
+        # Рёбра задней грани
+        draw_edge(v0, v1)
+        draw_edge(v1, v2)
+        draw_edge(v2, v3)
+        draw_edge(v3, v0)
 
-        glVertex3f(0.5, 0.5, 0.5)
-        glVertex3f(-0.5, 0.5, 0.5)
-
-        glVertex3f(-0.5, 0.5, 0.5)
-        glVertex3f(-0.5, -0.5, 0.5)
-
-        # Задняя грань
-        glVertex3f(-0.5, -0.5, -0.5)
-        glVertex3f(0.5, -0.5, -0.5)
-
-        glVertex3f(0.5, -0.5, -0.5)
-        glVertex3f(0.5, 0.5, -0.5)
-
-        glVertex3f(0.5, 0.5, -0.5)
-        glVertex3f(-0.5, 0.5, -0.5)
-
-        glVertex3f(-0.5, 0.5, -0.5)
-        glVertex3f(-0.5, -0.5, -0.5)
-
-        # Соединения передней и задней граней
-        glVertex3f(-0.5, -0.5, 0.5)
-        glVertex3f(-0.5, -0.5, -0.5)
-
-        glVertex3f(0.5, -0.5, 0.5)
-        glVertex3f(0.5, -0.5, -0.5)
-
-        glVertex3f(0.5, 0.5, 0.5)
-        glVertex3f(0.5, 0.5, -0.5)
-
-        glVertex3f(-0.5, 0.5, 0.5)
-        glVertex3f(-0.5, 0.5, -0.5)
+        # Соединительные рёбра
+        draw_edge(v0, v4)
+        draw_edge(v1, v5)
+        draw_edge(v2, v6)
+        draw_edge(v3, v7)
 
         glEnd()
         glPopMatrix()
