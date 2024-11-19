@@ -1,9 +1,7 @@
 import math
-
 from OpenGL.GL import *
-
 from lab2.shapes.shape import Shape
-from lab2.shapes.utils import draw_triangle, draw_edge
+from lab2.shapes.utils import draw_edge, batch_draw_triangles
 
 
 class Cone(Shape):
@@ -24,8 +22,8 @@ class Cone(Shape):
         self.draw_wireframe()
 
     def draw_surface(self):
-        """Рисуем поверхность конуса."""
-        glBegin(GL_TRIANGLES)
+        """Рисуем поверхность конуса с использованием batch."""
+        triangles = []
 
         # Вершина конуса
         tip = [0.0, self.height, 0.0]
@@ -51,9 +49,10 @@ class Cone(Shape):
             uv1 = [i / self.slices, 0.0]
             uv2 = [(i + 1) / self.slices, 0.0]
 
-            draw_triangle(tip, [x1, 0.0, z1], [x2, 0.0, z2], normal, uv_tip, uv1, uv2)
+            # Добавляем треугольник в список
+            triangles.append((tip, [x1, 0.0, z1], [x2, 0.0, z2], normal, uv_tip, uv1, uv2))
 
-        glEnd()
+        batch_draw_triangles(triangles)
 
         # Основание конуса
         glBegin(GL_TRIANGLE_FAN)

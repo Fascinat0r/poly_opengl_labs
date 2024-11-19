@@ -3,7 +3,7 @@ import math
 from OpenGL.GL import *
 
 from lab2.shapes.shape import Shape
-from lab2.shapes.utils import draw_triangle, draw_edge
+from lab2.shapes.utils import draw_triangle, draw_edge, batch_draw_triangles
 
 
 class Torus(Shape):
@@ -30,6 +30,7 @@ class Torus(Shape):
 
     def draw_surface(self):
         """Рисуем поверхность тора в виде треугольников."""
+        triangles = []
         glBegin(GL_TRIANGLES)
         for i in range(self.rings):
             for j in range(self.sides):
@@ -46,8 +47,9 @@ class Torus(Shape):
                 n4 = self.normal(i, j + 1)
 
                 # Рисуем два треугольника
-                draw_triangle(p1, p2, p3, n1, uv1, uv2, uv3)
-                draw_triangle(p1, p3, p4, n1, uv1, uv3, uv4)
+                triangles.append((p1, p2, p3, n1, uv1, uv2, uv3))
+                triangles.append((p1, p3, p4, n1, uv1, uv3, uv4))
+        batch_draw_triangles(triangles)
         glEnd()
 
     def draw_wireframe(self):
