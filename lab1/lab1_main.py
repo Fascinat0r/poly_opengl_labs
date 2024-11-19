@@ -93,7 +93,8 @@ def main():
         target_object=teapot,
         start_position=[-2.0, 0.0, 0.0],
         end_position=[-2.0, 0.0, -2.0],
-        speeds=[0.0, 0.0, 1]
+        speeds=[0.0, 0.0, 1],
+        tolerance=0.01
     )
     teapot_movement_animation.start()
     scene.add_animation(teapot_movement_animation)
@@ -103,7 +104,8 @@ def main():
         target_object=tor,
         start_position=[-2.0, 0.0, -4.0],
         end_position=[-2.0, 0.0, -2.0],
-        speeds=[0.0, 0.0, 1.0]
+        speeds=[0.0, 0.0, 1.0],
+        tolerance=0.01
     )
     tor_movement_animation.start()
     scene.add_animation(tor_movement_animation)
