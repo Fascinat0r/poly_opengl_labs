@@ -31,7 +31,6 @@ class Torus(Shape):
     def draw_surface(self):
         """Рисуем поверхность тора в виде треугольников."""
         triangles = []
-        glBegin(GL_TRIANGLES)
         for i in range(self.rings):
             for j in range(self.sides):
                 # Координаты текущей вершины и соседей
@@ -50,7 +49,6 @@ class Torus(Shape):
                 triangles.append((p1, p2, p3, n1, uv1, uv2, uv3))
                 triangles.append((p1, p3, p4, n1, uv1, uv3, uv4))
         batch_draw_triangles(triangles)
-        glEnd()
 
     def draw_wireframe(self):
         """Рисуем каркас тора (линии по рёбрам)."""
