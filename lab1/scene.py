@@ -43,11 +43,11 @@ class Scene:
         glColor3f(0.5, 0.5, 0.5)
         glBegin(GL_LINES)
 
-        for i in range(-10, 11):
-            glVertex3f(i, 0, -10)
-            glVertex3f(i, 0, 10)
-            glVertex3f(-10, 0, i)
-            glVertex3f(10, 0, i)
+        for i in range(-200, 210, 10):
+            glVertex3f(i, 0, -200)
+            glVertex3f(i, 0, 200)
+            glVertex3f(-200, 0, i)
+            glVertex3f(200, 0, i)
 
         glEnd()
 

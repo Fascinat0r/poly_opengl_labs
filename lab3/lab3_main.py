@@ -6,11 +6,9 @@ from lab3.materials.material import Material
 from lab3.materials.textures import ImageTexture, FlatTexture
 from lab3.render_window import RenderWindow
 from lab3.scene import Scene
-from lab3.shapes.cone import Cone
-from lab3.shapes.octahedron import Octahedron
+from lab3.shapes.cube import Cube
 from lab3.shapes.plane import Plane
-from lab3.shapes.teapot import Teapot
-from lab3.shapes.torus import Torus
+from lab3.shapes.sphere import Sphere
 
 
 def main():
@@ -93,28 +91,23 @@ def main():
         transparent=False
     )
 
-    # Создаем объекты и применяем материалы
-    textured_octahedron = Octahedron(position=[1.0, 2.0, -5.0], scale=2.0, rotation=[0.0, 0.0, 0.0],
-                                     material=textured_cube_material)
-    scene.add_object(textured_octahedron)
+    materials = [textured_cube_material, glossy_material, diffuse_material]
 
-    cone = Cone(base_radius=1.0, height=2.0, slices=20, position=[-3.0, 0.0, -5.0], scale=1.0,
-                rotation=[0.0, 0.0, 0.0], material=diffuse_material)
-    scene.add_object(cone)
+    # Создаем объекты
+    for idx, material in enumerate(materials):
+        cube = Cube(position=[-2.0 + idx * 2.0, 1.0, 0.0], scale=1.0, material=material)
+        scene.add_object(cube)
 
-    teapot = Teapot(position=[3.0, 0.5, -4.0], scale=0.02, rotation=[-90.0, 0.0, 0.0], material=glossy_material)
-    scene.add_object(teapot)
+        sphere = Sphere(position=[-2.0 + idx * 2.0, 1.0, 2.0], scale=1.0, material=material)
+        scene.add_object(sphere)
 
-    torus = Torus(inner_radius=0.5, outer_radius=1.0, rings=30, sides=30, position=[-3.0, 1.0, -8.0],
-                  scale=1.0, rotation=[0.0, 0.0, 0.0], material=glossy_material)
-    scene.add_object(torus)
-
-    move_animation = LoopedMovementAnimation(target_object=textured_octahedron,
-                                             start_position=[1.0, 2.0, -5.0],
-                                             end_position=[-1.0, 2.0, -5.0],
-                                             speeds = [0.6, 0.0, 0.0])
-    move_animation.start()
-    scene.add_animation(move_animation)
+        move_animation = LoopedMovementAnimation(target_object=sphere,
+                                                 start_position=[-2.0 + idx * 2.0, 3.0, 2.0],
+                                                 end_position=[-2.0 + idx * 2.0, 3.0, -2.0],
+                                                 speeds=[0.0, 0.0, 1.0],
+                                                 tolerance=0.01)
+        move_animation.start()
+        scene.add_animation(move_animation)
 
     # Устанавливаем сцену в окно рендеринга
     window.set_scene(scene)

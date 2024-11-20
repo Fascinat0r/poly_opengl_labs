@@ -3,13 +3,10 @@ from lab2.camera import Camera
 from lab2.materials.textures import Texture
 from lab2.render_window import RenderWindow
 from lab2.scene import Scene
-from lab2.shapes.cone import Cone
 from lab2.shapes.cube import Cube
-from lab2.shapes.octahedron import Octahedron
-from lab2.shapes.torus import Torus
+from lab2.shapes.sphere import Sphere
 from light.point_light import PointLight
 from materials.material import Material
-from shapes.teapot import Teapot
 
 
 def main():
@@ -43,12 +40,13 @@ def main():
         transparent=True  # Включение прозрачности
     )
 
-    # Полированный материал для тороидального объекта
+    # Полированный материал
     polished_material = Material(
-        color=[0.2, 0.2, 0.6, 1.0],  # Голубой цвет
+        color=[0.2, 0.2, 0.6, 1.0],
         shininess=128,
         specular=[2.0, 2.0, 2.0, 1.0],
         diffuse=[0.4, 0.4, 0.4, 1.0],
+        transparent=False
     )
 
     # Матовый материал для объектов с текстурой
@@ -57,7 +55,8 @@ def main():
         color=[0.8, 0.8, 0.0, 1.0],
         shininess=10,
         specular=[0.1, 0.1, 0.1, 1.0],
-        diffuse=[0.6, 0.6, 0.6, 1.0]
+        diffuse=[0.6, 0.6, 0.6, 1.0],
+        transparent=False
     )
 
     # Матовый материал для фона
@@ -65,7 +64,8 @@ def main():
         color=[0.1, 0.1, 0.1, 1.0],
         shininess=10,
         specular=[0.1, 0.1, 0.1, 1.0],
-        diffuse=[0.1, 0.1, 0.1, 1.0]
+        diffuse=[0.1, 0.1, 0.1, 1.0],
+        transparent=False
     )
 
     # Создаем объекты и применяем материалы
@@ -74,8 +74,7 @@ def main():
     room = Cube(position=[0.0, 9.0, 0.0], scale=20.0, material=background_material)
     scene.add_object(room)
 
-    # Создаем текстурированный октаэдр с матовым материалом
-    textured_cube_material = Material(
+    textured_material = Material(
         color=[1.0, 1.0, 1.0, 0.0],
         shininess=10,
         specular=[0.1, 0.1, 0.1, 1.0],
@@ -83,21 +82,20 @@ def main():
         texture=texture.texture_id,
         transparent=True)
 
-    textured_oct = Octahedron(position=[1.0, 1.0, -5.0], scale=2.0, material=textured_cube_material)
-    scene.add_object(textured_oct)
+    materials = [transparent_material, polished_material, diffuse_material, textured_material]
 
-    # Полированный голубой чайник
-    polished_teapot = Teapot(position=[-3.0, 1.0, 0.0], scale=1.0, material=polished_material)
-    scene.add_object(polished_teapot)
+    cube = Cube(position=[-2.0, 0.5, 0.0], scale=1.0, material=materials[0])
 
-    # Прозрачный розовый тор
-    transparent_torus = Torus(inner_radius=0.5, outer_radius=1.0, rings=30, sides=30,
-                              position=[0.5, 1.0, 0.0], scale=1.0, material=transparent_material)
-    scene.add_object(transparent_torus)
+    sphere = Sphere(radius=0.5, position=[2.0, 0.5, 0.0], scale=1.0, material=materials[1], slices=16, stacks=16)
 
-    # Матовый желтый конус
-    matte_cone = Cone(position=[3.0, 0.0, 0.0], scale=1.0, material=diffuse_material)
-    scene.add_object(matte_cone)
+    big_cube = Cube(position=[0.0, 0.5, 0.0], scale=1.0, material=materials[2])
+
+    small_cube = Cube(position=[-2.0, 2.5, -2.0], scale=1.0, material=materials[3])
+
+    scene.add_object(cube)
+    scene.add_object(sphere)
+    scene.add_object(big_cube)
+    scene.add_object(small_cube)
 
     # Создаем анимацию вращения источника света
     light_rotation_animation = LightRotationAnimation(point_light, radius=5.0, speed=30.0)
