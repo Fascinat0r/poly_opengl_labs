@@ -23,17 +23,17 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture = ImageTexture("../data/textures/emerald.jpg")
-    texture.load()
+    texture1 = ImageTexture("../data/textures/carpet.jpg")
+    texture1.load()
 
-    texture_cobblestone = ImageTexture("../data/textures/grassy_cobblestone.jpg")
-    texture_cobblestone.load()
+    texture2 = ImageTexture("../data/textures/mandala.jpg")
+    texture2.load()
 
-    pink_texture = FlatTexture(color=[255.0, 192.0, 203.0])
-    pink_texture.load()
+    mirt_texture = FlatTexture(color=[33.0, 66.0, 30.0])
+    mirt_texture.load()
 
-    peach_texture = FlatTexture(color=[255.0, 210.0, 180.0])
-    peach_texture.load()
+    terracota_texture = FlatTexture(color=[204.0, 78.0, 92.0])
+    terracota_texture.load()
 
     # Создаем направленный свет
     directional_light = DirectionalLight(direction=[-0.2, -1.0, -0.3],
@@ -55,7 +55,7 @@ def main():
         diffuse=[0.5, 0.5, 0.5],
         specular=[0.2, 0.2, 0.2],
         shininess=10.0,
-        texture=texture_cobblestone.texture_id,
+        texture=texture1.texture_id,
         transparent=False
     )
 
@@ -69,7 +69,7 @@ def main():
         diffuse=[0.8, 0.8, 0.8],
         specular=[0.5, 0.5, 0.5],
         shininess=32.0,
-        texture=texture.texture_id,
+        texture=texture2.texture_id,
         transparent=True
     )
 
@@ -78,7 +78,7 @@ def main():
         diffuse=[0.55, 0.55, 0.55],
         specular=[0.7, 0.7, 0.7],
         shininess=32.0,
-        texture=pink_texture.texture_id,
+        texture=mirt_texture.texture_id,
         transparent=False
     )
 
@@ -87,7 +87,7 @@ def main():
         diffuse=[0.8, 0.8, 0.8],
         specular=[0.5, 0.5, 0.5],
         shininess=32.0,
-        texture=peach_texture.texture_id,
+        texture=terracota_texture.texture_id,
         transparent=False
     )
 
