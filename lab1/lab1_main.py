@@ -13,7 +13,7 @@ from lab1.shapes.sphere import Sphere
 from scene import Scene
 
 # Создаём камеру и сцену
-camera = Camera([0.0, 0.0, 5.0], [0.0, 1.0, 0.0], -90.0, 0.0)
+camera = Camera([0.0, 100.0, 350.0], [0.0, 1.0, 0.0], -90.0, 0.0)
 scene = Scene()
 
 
@@ -23,7 +23,7 @@ def init():
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45, 800 / 600, 0.1, 100.0)
+    gluPerspective(45, 800 / 600, 0.1, 1000.0)
     glMatrixMode(GL_MODELVIEW)
 
 
@@ -57,43 +57,47 @@ def main():
     init()
 
     # Создаем объекты
-    noanim_sphere = Sphere(radius=1.732, slices=16, stacks=8, position=[-4.0, 2.0, 0.0], scale=1.0,
-                           color=[1.0, 0.0, 1.0])
-    scene.add_object(noanim_sphere)
-    noanim_cube = Cube(position=[-4.0, 2.0, 0.0], scale=2.0, color=[1.0, 1.0, 0.0], rotation=[0.0, 0.0, 0.0])
-    scene.add_object(noanim_cube)
-
-    sphere = Sphere(radius=1.732, slices=16, stacks=8, position=[0.0, 2.0, 0.0], scale=1.0, color=[1.0, 0.0, 1.0])
-    scene.add_object(sphere)
-    cube = Cube(position=[0.0, 2.0, 0.0], scale=2.0, color=[1.0, 1.0, 0.0], rotation=[0.0, 0.0, 0.0])
+    cube = Cube(position=[40.0, 125.0, 30.0], scale=250.0, color=[0.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0])
     scene.add_object(cube)
 
-    cone = Cone(base_radius=1.0, height=1.0, slices=20, position=[4.0, 0.0, 0.0], scale=1.0,
+    sphere = Sphere(radius=1.732*250/2, slices=32, stacks=16, position=[40.0, 125.0, 30.0], color=[1.0, 0.0, 1.0])
+    scene.add_object(sphere)
+
+    cone = Cone(base_radius=100.0, height=100.0, slices=20, position=[-300.0, 0.0, 0.0], scale=1.0,
                 color=[1.0, 0.0, 0.0], rotation=[0.0, 0.0, 0.0])
     scene.add_object(cone)
 
-    cylinder = Cylinder(base_radius=1.0, top_radius=1.0, height=2.0, slices=20, position=[4.0, 1.0, 0.0], scale=1.0,
+    cylinder = Cylinder(base_radius=100.0, top_radius=100.0, height=100.0, slices=20, position=[-300.0, 100.0, 0.0], scale=1.0,
                         color=[0.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0])
     scene.add_object(cylinder)
 
     # Создаем анимации и добавляем их в сцену
     cube_movement_animation = LoopedMovementAnimation(
         target_object=cube,
-        start_position=[0.0, 2.0, 0.0],
-        end_position=[0.0, -248.0, 0.0],
-        speeds=[0.0, 100.0, 0.0]
+        start_position=[40.0, 125.0, 30.0],
+        end_position=[40.0+250, 125.0, 30.0],
+        speeds=[250.0, 0.0, 0.0]
     )
     cube_movement_animation.start()
     scene.add_animation(cube_movement_animation)
 
-    sphere_scale_animation = LoopedScaleAnimation(
+    sphere_movement_animation = LoopedMovementAnimation(
         target_object=sphere,
-        start_scale=1.0,
-        end_scale=0.75,
-        speed=0.1
+        start_position=[40.0, 125.0, 30.0],
+        end_position=[40.0, 125.0-150, 30.0],
+        speeds=[0.0, 150.0, 0.0]
     )
-    sphere_scale_animation.start()
-    scene.add_animation(sphere_scale_animation)
+    sphere_movement_animation.start()
+    scene.add_animation(sphere_movement_animation)
+
+    cylinder_scale_animation = LoopedScaleAnimation(
+        target_object=cylinder,
+        start_scale=1.0,
+        end_scale=1.7,
+        speed=1.0
+    )
+    cylinder_scale_animation.start()
+    scene.add_animation(cylinder_scale_animation)
 
     # Скрываем курсор и фиксируем мышь в центре окна
     glutSetCursor(GLUT_CURSOR_NONE)

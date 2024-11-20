@@ -28,10 +28,10 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture = ImageTexture("../data/textures/wool.jpg")
+    texture = ImageTexture("../data/textures/kanye.png")
     texture.load()
 
-    texture_cobblestone = ImageTexture("../data/textures/grass.jpg")
+    texture_cobblestone = ImageTexture("../data/textures/bandera.jpg")
     texture_cobblestone.load()
 
     blue_texture = FlatTexture(color=[80.0, 80.0, 255.0])
@@ -102,15 +102,15 @@ def main():
                 rotation=[0.0, 0.0, 0.0], material=diffuse_material)
     scene.add_object(cone)
 
-    cube = Cube(position=[-1.0, 1.0, 4.0], scale=1.0, rotation=[0.0, 0.0, 0.0], material=glossy_material)
+    cube = Cube(position=[-1.0, 4.0, 4.0], scale=2.0, rotation=[0.0, 0.0, 0.0], material=textured_material)
     scene.add_object(cube)
 
-    sphere = Sphere(radius=1,
+    sphere = Sphere(radius=2,
                     stacks=20,
                     slices=20,
-                    position=[2.0, 2.0, 2.0],
+                    position=[2.0, 4.0, 2.0],
                     scale=[1.0, 1.0, 1.0],
-                    rotation=[0.0, 0.0, 0.0],
+                    rotation=[180.0, -90.0, 0.0],
                     material=textured_material)
 
     scene.add_object(sphere)
@@ -126,8 +126,8 @@ def main():
     scene.add_object(cylinder)
 
     move_animation = LoopedMovementAnimation(target_object=sphere,
-                                             start_position=[1.0, 2.0, -5.0],
-                                             end_position=[-1.0, 2.0, -5.0],
+                                             start_position=[1.0, 4.0, -5.0],
+                                             end_position=[-1.0, 4.0, -5.0],
                                              speeds=[0.5, 0.0, 0.0])
     move_animation.start()
     scene.add_animation(move_animation)
