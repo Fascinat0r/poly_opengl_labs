@@ -2,15 +2,15 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from animations.looped_rotation_animation import LoopedRotationAnimation
 from camera import Camera
 from handlers import create_mouse_movement_handler, key_pressed, key_released, handle_camera_movement
 from lab1.animations.looped_movement_animation import LoopedMovementAnimation
-from lab1.shapes.octahedron import Octahedron
-from lab1.shapes.teapot import Teapot
-from lab1.shapes.torus import Torus
+from lab1.animations.looped_scale_animation import LoopedScaleAnimation
+from lab1.shapes.cone import Cone
+from lab1.shapes.cube import Cube
+from lab1.shapes.cylinder import Cylinder
+from lab1.shapes.sphere import Sphere
 from scene import Scene
-from shapes.cone import Cone
 
 # Создаём камеру и сцену
 camera = Camera([0.0, 0.0, 5.0], [0.0, 1.0, 0.0], -90.0, 0.0)
@@ -57,58 +57,43 @@ def main():
     init()
 
     # Создаем объекты
-    octahedron = Octahedron(position=[0.0, 0.0, 0.0], scale=1.0, color=[1.0, 0.0, 0.0])
-    scene.add_object(octahedron)
+    noanim_sphere = Sphere(radius=1.732, slices=16, stacks=8, position=[-4.0, 2.0, 0.0], scale=1.0,
+                           color=[1.0, 0.0, 1.0])
+    scene.add_object(noanim_sphere)
+    noanim_cube = Cube(position=[-4.0, 2.0, 0.0], scale=2.0, color=[1.0, 1.0, 0.0], rotation=[0.0, 0.0, 0.0])
+    scene.add_object(noanim_cube)
 
-    cone = Cone(base_radius=1.0, height=2.0, slices=30, position=[2.0, 0.0, 0.0], scale=1.0, color=[1.0, 1.0, 0.0])
+    sphere = Sphere(radius=1.732, slices=16, stacks=8, position=[0.0, 2.0, 0.0], scale=1.0, color=[1.0, 0.0, 1.0])
+    scene.add_object(sphere)
+    cube = Cube(position=[0.0, 2.0, 0.0], scale=2.0, color=[1.0, 1.0, 0.0], rotation=[0.0, 0.0, 0.0])
+    scene.add_object(cube)
+
+    cone = Cone(base_radius=1.0, height=1.0, slices=20, position=[4.0, 0.0, 0.0], scale=1.0,
+                color=[1.0, 0.0, 0.0], rotation=[0.0, 0.0, 0.0])
     scene.add_object(cone)
 
-    teapot = Teapot(position=[-2.0, 0.0, 0.0], scale=1.0, color=[0.0, 1.0, 1.0])
-    scene.add_object(teapot)
-
-    tor = Torus(position=[-2.0, 0.0, -4.0], scale=1.0, color=[1.0, 0.0, 1.0])
-    scene.add_object(tor)
+    cylinder = Cylinder(base_radius=1.0, top_radius=1.0, height=2.0, slices=20, position=[4.0, 1.0, 0.0], scale=1.0,
+                        color=[0.0, 1.0, 1.0], rotation=[0.0, 0.0, 0.0])
+    scene.add_object(cylinder)
 
     # Создаем анимации и добавляем их в сцену
-    cone_rotation_animation = LoopedRotationAnimation(
-        target_object=cone,
-        start_angles=[0.0, 0.0, 0.0],
-        end_angles=[0.0, 0.0, -60.0],
-        speeds=[0.0, 0.0, 20]
+    cube_movement_animation = LoopedMovementAnimation(
+        target_object=cube,
+        start_position=[0.0, 2.0, 0.0],
+        end_position=[0.0, -248.0, 0.0],
+        speeds=[0.0, 100.0, 0.0]
     )
-    cone_rotation_animation.start()
-    scene.add_animation(cone_rotation_animation)
+    cube_movement_animation.start()
+    scene.add_animation(cube_movement_animation)
 
-    oct_rotation_animation = LoopedRotationAnimation(
-        target_object=octahedron,
-        start_angles=[0.0, 0.0, 0.0],
-        end_angles=[90.0, 0.0, 0.0],
-        speeds=[20, 0.0, 0.0]
+    sphere_scale_animation = LoopedScaleAnimation(
+        target_object=sphere,
+        start_scale=1.0,
+        end_scale=0.75,
+        speed=0.1
     )
-    oct_rotation_animation.start()
-    scene.add_animation(oct_rotation_animation)
-
-    # Анимации перемещения
-    teapot_movement_animation = LoopedMovementAnimation(
-        target_object=teapot,
-        start_position=[-2.0, 0.0, 0.0],
-        end_position=[-2.0, 0.0, -2.0],
-        speeds=[0.0, 0.0, 1],
-        tolerance=0.01
-    )
-    teapot_movement_animation.start()
-    scene.add_animation(teapot_movement_animation)
-
-    # Анимации перемещения тора, центр тора должен совпасть с центром чайника
-    tor_movement_animation = LoopedMovementAnimation(
-        target_object=tor,
-        start_position=[-2.0, 0.0, -4.0],
-        end_position=[-2.0, 0.0, -2.0],
-        speeds=[0.0, 0.0, 1.0],
-        tolerance=0.01
-    )
-    tor_movement_animation.start()
-    scene.add_animation(tor_movement_animation)
+    sphere_scale_animation.start()
+    scene.add_animation(sphere_scale_animation)
 
     # Скрываем курсор и фиксируем мышь в центре окна
     glutSetCursor(GLUT_CURSOR_NONE)

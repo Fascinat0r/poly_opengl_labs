@@ -7,8 +7,11 @@ from lab3.materials.textures import ImageTexture, FlatTexture
 from lab3.render_window import RenderWindow
 from lab3.scene import Scene
 from lab3.shapes.cone import Cone
+from lab3.shapes.cube import Cube
+from lab3.shapes.cylinder import Cylinder
 from lab3.shapes.octahedron import Octahedron
 from lab3.shapes.plane import Plane
+from lab3.shapes.sphere import Sphere
 from lab3.shapes.teapot import Teapot
 from lab3.shapes.torus import Torus
 
@@ -25,17 +28,17 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture = ImageTexture("../data/textures/emerald.jpg")
+    texture = ImageTexture("../data/textures/wool.jpg")
     texture.load()
 
-    texture_cobblestone = ImageTexture("../data/textures/grassy_cobblestone.jpg")
+    texture_cobblestone = ImageTexture("../data/textures/grass.jpg")
     texture_cobblestone.load()
 
-    pink_texture = FlatTexture(color=[255.0, 192.0, 203.0])
-    pink_texture.load()
+    blue_texture = FlatTexture(color=[80.0, 80.0, 255.0])
+    blue_texture.load()
 
-    peach_texture = FlatTexture(color=[255.0, 210.0, 180.0])
-    peach_texture.load()
+    red_texture = FlatTexture(color=[255.0, 80.0, 80.0])
+    red_texture.load()
 
     # Создаем направленный свет
     directional_light = DirectionalLight(direction=[-0.2, -1.0, -0.3],
@@ -66,7 +69,7 @@ def main():
     scene.add_object(floor)
 
     # Создаем материалы для объектов
-    textured_cube_material = Material(
+    textured_material = Material(
         ambient=[0.1, 0.1, 0.1],
         diffuse=[0.8, 0.8, 0.8],
         specular=[0.5, 0.5, 0.5],
@@ -80,7 +83,7 @@ def main():
         diffuse=[0.55, 0.55, 0.55],
         specular=[0.7, 0.7, 0.7],
         shininess=32.0,
-        texture=pink_texture.texture_id,
+        texture=blue_texture.texture_id,
         transparent=False
     )
 
@@ -89,30 +92,43 @@ def main():
         diffuse=[0.8, 0.8, 0.8],
         specular=[0.5, 0.5, 0.5],
         shininess=32.0,
-        texture=peach_texture.texture_id,
+        texture=red_texture.texture_id,
         transparent=False
     )
 
     # Создаем объекты и применяем материалы
-    textured_octahedron = Octahedron(position=[1.0, 2.0, -5.0], scale=2.0, rotation=[0.0, 0.0, 0.0],
-                                     material=textured_cube_material)
-    scene.add_object(textured_octahedron)
 
     cone = Cone(base_radius=1.0, height=2.0, slices=20, position=[-3.0, 0.0, -5.0], scale=1.0,
                 rotation=[0.0, 0.0, 0.0], material=diffuse_material)
     scene.add_object(cone)
 
-    teapot = Teapot(position=[3.0, 0.5, -4.0], scale=0.02, rotation=[-90.0, 0.0, 0.0], material=glossy_material)
-    scene.add_object(teapot)
+    cube = Cube(position=[-1.0, 1.0, 4.0], scale=1.0, rotation=[0.0, 0.0, 0.0], material=glossy_material)
+    scene.add_object(cube)
 
-    torus = Torus(inner_radius=0.5, outer_radius=1.0, rings=30, sides=30, position=[-3.0, 1.0, -8.0],
-                  scale=1.0, rotation=[0.0, 0.0, 0.0], material=glossy_material)
-    scene.add_object(torus)
+    sphere = Sphere(radius=1,
+                    stacks=20,
+                    slices=20,
+                    position=[2.0, 2.0, 2.0],
+                    scale=[1.0, 1.0, 1.0],
+                    rotation=[0.0, 0.0, 0.0],
+                    material=textured_material)
 
-    move_animation = LoopedMovementAnimation(target_object=textured_octahedron,
+    scene.add_object(sphere)
+
+    cylinder = Cylinder(base_radius=1.0,
+                        top_radius=1.0,
+                        height=2.0,
+                        slices=20,
+                        position=[-2.0, 0.0, 2.0],
+                        scale=[1.0, 1.0, 1.0],
+                        rotation=[0.0, 0.0, 0.0],
+                        material=glossy_material)
+    scene.add_object(cylinder)
+
+    move_animation = LoopedMovementAnimation(target_object=sphere,
                                              start_position=[1.0, 2.0, -5.0],
                                              end_position=[-1.0, 2.0, -5.0],
-                                             speeds = [0.6, 0.0, 0.0])
+                                             speeds=[0.5, 0.0, 0.0])
     move_animation.start()
     scene.add_animation(move_animation)
 
