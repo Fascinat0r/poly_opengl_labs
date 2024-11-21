@@ -31,10 +31,10 @@ class PointLight:
         self.attenuation = attenuation
 
         # HSV параметры
-        self.hue = 0.0  # Начальный оттенок
+        self.hue = 0.5  # Начальный оттенок
         self.saturation = 0.0  # Начальная насыщенность
         self.value = 1.0  # Полная яркость
-        self.step = 0.01  # Шаг изменения
+        self.step = 0.05  # Шаг изменения
         self.direction = 1  # Направление изменения
 
     def apply(self):
