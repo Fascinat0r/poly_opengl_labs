@@ -6,6 +6,7 @@ from camera import Camera
 from handlers import create_mouse_movement_handler, key_pressed, key_released, handle_camera_movement
 from lab1.animations.looped_movement_animation import LoopedMovementAnimation
 from lab1.animations.looped_scale_animation import LoopedScaleAnimation
+from lab1.animations.looped_rotation_animation import LoopedRotationAnimation
 from lab1.shapes.cone import Cone
 from lab1.shapes.cube import Cube
 from lab1.shapes.cylinder import Cylinder
@@ -23,7 +24,7 @@ def init():
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45, 800 / 600, 0.1, 100.0)
+    gluPerspective(45, 800 / 600, 0.1, 1000.0)
     glMatrixMode(GL_MODELVIEW)
 
 
@@ -94,6 +95,15 @@ def main():
     )
     sphere_scale_animation.start()
     scene.add_animation(sphere_scale_animation)
+
+    anim = LoopedRotationAnimation(
+        target_object=cone,
+        start_angles=[0.0, 0.0, 0.0],
+        end_angles=[0.0, 0.0, 90.0],
+        speeds=[0.0, 0.0, 30.0]
+    )
+    anim.start()
+    scene.add_animation(anim)
 
     # Скрываем курсор и фиксируем мышь в центре окна
     glutSetCursor(GLUT_CURSOR_NONE)

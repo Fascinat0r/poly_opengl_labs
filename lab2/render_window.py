@@ -56,6 +56,8 @@ class RenderWindow:
 
         aspect_ratio = self.width / self.height
 
+        gluPerspective(45, self.width / self.height, 0.1, 100.0)
+
         glViewport(0, 0, self.width, self.height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()

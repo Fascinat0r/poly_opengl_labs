@@ -125,13 +125,6 @@ def main():
                         material=glossy_material)
     scene.add_object(cylinder)
 
-    move_animation = LoopedMovementAnimation(target_object=sphere,
-                                             start_position=[1.0, 2.0, -5.0],
-                                             end_position=[-1.0, 2.0, -5.0],
-                                             speeds=[0.5, 0.0, 0.0])
-    move_animation.start()
-    scene.add_animation(move_animation)
-
     # Устанавливаем сцену в окно рендеринга
     window.set_scene(scene)
 
