@@ -2,7 +2,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from lab2.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement
+from lab2.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement, \
+    handle_light_color_change
 from lab2.scene import Scene
 
 
@@ -45,6 +46,7 @@ class RenderWindow:
 
     def update(self, value):
         handle_camera_movement(self.scene.camera)  # Обновляем позицию камеры
+        handle_light_color_change(self.scene.lights[0])  # Изменяем цвет света
         glutPostRedisplay()
         glutTimerFunc(16, self.update, 0)
 
