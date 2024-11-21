@@ -1,3 +1,5 @@
+import colorsys
+
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 
@@ -10,8 +12,7 @@ class PointLight:
                  ambient=[0.05, 0.05, 0.05, 1.0],
                  diffuse=[1.0, 1.0, 1.0, 1.0],
                  specular=[1.0, 1.0, 1.0, 1.0],
-                 attenuation=[1.0, 0.1, 0.01],
-                 target_color=[1.0, 0.0, 0.0, 1.0], ):
+                 attenuation=[1.0, 0.1, 0.01]):
         """
         light_id: ID источника света (например, GL_LIGHT0).
         position: Позиция источника света [x, y, z, w]. w = 1 для точечного источника.
@@ -20,7 +21,7 @@ class PointLight:
         specular: Зеркальный свет.
         attenuation: Аттенюация (затухание света) [constant, linear, quadratic].
         """
-        global next_id  # TODO: костыль
+        global next_id
         self.light_id = ids[next_id]
         next_id += 1
         self.position = position
@@ -29,13 +30,12 @@ class PointLight:
         self.specular = specular.copy()
         self.attenuation = attenuation
 
-        # Для плавного изменения цвета
-        self.original_ambient = ambient.copy()
-        self.original_diffuse = diffuse.copy()
-        self.original_specular = specular.copy()
-        self.target_color = [1.0, 0.0, 0.0, 1.0]  # Пример: красный цвет
-        self.color_step = 0.01  # Шаг изменения цвета
-        self.color_direction = 1  # 1: к целевому, -1: к исходному
+        # HSV параметры
+        self.hue = 0.0  # Начальный оттенок
+        self.saturation = 0.0  # Начальная насыщенность
+        self.value = 1.0  # Полная яркость
+        self.step = 0.01  # Шаг изменения
+        self.direction = 1  # Направление изменения
 
     def apply(self):
         """Применение параметров точечного источника света."""
@@ -65,36 +65,33 @@ class PointLight:
         glDisable(GL_LIGHTING)
 
         # Рисуем маленькую сферу в месте источника света
-        glColor3f(1.0, 1.0, 0.0)  # Желтый цвет для индикатора
+        r, g, b = colorsys.hsv_to_rgb(self.hue, self.saturation, self.value)
+        glColor3f(r, g, b)
         glutSolidSphere(0.1, 20, 20)  # Радиус 0.1, деление 20x20
 
         # Включаем освещение обратно
         glEnable(GL_LIGHTING)
         glPopMatrix()
 
-    def change_color(self, target_color=None):
+    def change_color(self):
         """
-        Изменение цвета источника света плавно от исходного до заданного и обратно.
-        :param target_color: Целевой цвет [R, G, B, A]. Если None, используется self.target_color.
+        Изменение цвета источника света по кольцу HSV.
         """
-        if target_color:
-            self.target_color = target_color
+        # Обновляем оттенок
+        self.saturation += self.step
+        if self.saturation > 1.0 and self.direction == 1:
+            self.saturation = 1.0
+            self.direction = -1
+        elif self.saturation < 0.0 and self.direction == -1:
+            self.saturation = 0.0
+            self.direction = 1
+        # Преобразуем HSV -> RGB
+        r, g, b = colorsys.hsv_to_rgb(self.hue, self.saturation, self.value)
 
-        # Определяем текущую цель (целевой или исходный цвет)
-        current_target = self.target_color if self.color_direction == 1 else self.original_ambient
-
-        # Обновляем значения цветов с плавным изменением
-        for i in range(4):
-            # Линейное приближение текущего цвета к целевому
-            self.ambient[i] += (current_target[i] - self.ambient[i]) * self.color_step
-            self.diffuse[i] += (current_target[i] - self.diffuse[i]) * self.color_step
-            self.specular[i] += (current_target[i] - self.specular[i]) * self.color_step
-
-        # Проверяем, достигнут ли целевой цвет
-        if all(abs(self.ambient[i] - current_target[i]) < 0.01 for i in range(4)):
-            # Меняем направление, если достигли текущей цели
-            self.color_direction *= -1
+        # Обновляем цвета источника света
+        self.ambient = [r * 0.1, g * 0.1, b * 0.1, 1.0]  # Менее яркий фоновый свет
+        self.diffuse = [r, g, b, 1.0]  # Основной цвет
+        self.specular = [r, g, b, 1.0]  # Цвет бликов
 
         # Применяем обновленные значения
         self.apply()
-
