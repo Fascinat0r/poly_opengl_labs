@@ -91,7 +91,7 @@ def main():
     scene.add_object(polished_teapot)
 
     # Прозрачный розовый тор
-    transparent_torus = Torus(inner_radius=0.5, outer_radius=1.0, rings=30, sides=30,
+    transparent_torus = Torus(inner_radius=0.5, outer_radius=1.0, rings=10, sides=10,
                               position=[0.5, 1.0, 0.0], scale=1.0, material=transparent_material)
     scene.add_object(transparent_torus)
 
