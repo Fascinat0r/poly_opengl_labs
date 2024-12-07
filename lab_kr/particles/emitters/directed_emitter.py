@@ -8,7 +8,7 @@ from lab_kr.particles.emitter import Emitter
 from lab_kr.particles.particle import Particle
 
 
-class ConeEmitter(Emitter):
+class DirectedEmitter(Emitter):
     def __init__(self, position, emission_rate, max_particles, speed_range, size_range, color, lifetime,
                  main_direction=None, max_angle=15.0):
         """
@@ -24,7 +24,7 @@ class ConeEmitter(Emitter):
         """
         super().__init__(position, emission_rate, max_particles)
         if main_direction is None:
-            main_direction = [0.5, 0.5, 0.5]
+            main_direction = [0.0, 1.0, 0.0]  # Направление вверх по умолчанию
         self.speed_range = speed_range
         self.size_range = size_range
         self.color = glm.vec4(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3] / 255.0)
@@ -33,25 +33,29 @@ class ConeEmitter(Emitter):
         self.max_angle = math.radians(max_angle)  # Преобразуем угол в радианы
 
     def emit_particle(self):
-        # Генерация случайного отклонения внутри конуса
+        # Случайный угол отклонения внутри конуса
         angle_offset = random.uniform(0, self.max_angle)
-        angle_azimuth = random.uniform(0, 2 * math.pi)
+        azimuth_angle = random.uniform(0, 2 * math.pi)
 
-        # Вектор отклонения
-        deviation = glm.vec3(
-            math.sin(angle_offset) * math.cos(angle_azimuth),
-            math.cos(angle_offset),
-            math.sin(angle_offset) * math.sin(angle_azimuth)
+        # Генерация случайной оси вращения
+        random_axis = glm.vec3(
+            math.sin(azimuth_angle),
+            math.cos(azimuth_angle),
+            random.uniform(-1.0, 1.0)
         )
+        random_axis = glm.normalize(random_axis)
 
-        # Направление частицы = основное направление + отклонение
-        direction = glm.normalize(self.main_direction + deviation)
+        # Матрица вращения для поворота основного направления
+        rotation_matrix = glm.rotate(angle_offset, random_axis)
 
-        # Случайная скорость
+        # Вычисляем направление частицы
+        direction = glm.normalize(rotation_matrix * glm.vec4(self.main_direction, 1.0))
+
+        # Генерация случайной скорости
         speed = random.uniform(self.speed_range[0], self.speed_range[1])
-        velocity = direction * speed
+        velocity = glm.vec3(direction) * speed
 
-        # Случайный размер частицы
+        # Генерация случайного размера частицы
         size = random.uniform(self.size_range[0], self.size_range[1])
 
         return Particle(

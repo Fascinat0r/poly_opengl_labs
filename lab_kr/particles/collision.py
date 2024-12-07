@@ -1,21 +1,24 @@
+from typing import List
+
 import glm
 
 from lab3.shapes.shape import Shape
+from lab_kr.particles.particle import Particle
 from lab_kr.shapes.cube import Cube
 from lab_kr.shapes.sphere import Sphere
 
 
 class CollisionHandler:
-    def __init__(self, scene):
-        self.scene = scene
+    def __init__(self, objects: List[Shape]):
+        self.objects = objects
 
-    def handle_collisions(self, particle):
-        for obj in self.scene.objects:
+    def handle_collisions(self, particle: Particle):
+        for obj in self.objects:
             if isinstance(obj, Cube):  # Столкновение с кубом
-                if self.check_collision(particle.position, obj):
+                if self.check_collision_cube(particle.position, obj):
                     # Изменяем направление движения на противоположное
                     self.handle_collision_cube(particle, obj)
-            elif isinstance(obj, Sphere):  # Столкновение с сферой
+            elif isinstance(obj, Sphere):  # Столкновение со сферой
                 if self.check_collision_sphere(particle.position, obj):
                     # Отражение по нормали
                     self.handle_collision_sphere(particle, obj)
@@ -55,7 +58,7 @@ class CollisionHandler:
         particle.velocity = glm.reflect(particle.velocity, normal)
 
     @staticmethod
-    def check_collision(position, obj: Shape):
+    def check_collision_cube(position, obj: Cube):
         # Простейшая AABB коллизия с кубом
         half_scale = obj.scale / 2
         min_bound = glm.vec3(obj.position[0] - half_scale,
@@ -69,8 +72,7 @@ class CollisionHandler:
                 min_bound.z <= position.z <= max_bound.z)
 
     @staticmethod
-    def check_collision_sphere(position, obj: Shape, obj_radius=1.0):
-        # Столкновение с сферой: расстояние до центра меньше радиуса
-        center = glm.vec3(*obj.position)
-        distance = glm.length(position - center)
-        return distance <= obj_radius
+    def check_collision_sphere(position, obj: Sphere):
+        # Столкновение со сферой: расстояние до центра меньше радиуса
+        distance = glm.length(position - obj.position)
+        return distance <= obj.radius

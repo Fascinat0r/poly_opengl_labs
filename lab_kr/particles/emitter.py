@@ -1,9 +1,11 @@
 # particles/emitter.py
 from abc import ABC, abstractmethod
+from typing import List
 
 import glm
 
 from lab_kr.materials.shader import Shader
+from lab_kr.particles.particle import Particle
 
 
 class Emitter(ABC):
@@ -11,14 +13,14 @@ class Emitter(ABC):
         self.position = glm.vec3(*position)
         self.emission_rate = emission_rate  # Частота эмиссии (частиц в секунду)
         self.max_particles = max_particles
-        self.particles = []
+        self.particles: List[Particle] = []
         self.accumulator = 0.0  # Накопитель времени
 
     @abstractmethod
     def emit_particle(self):
         pass
 
-    def update(self, delta_time, acceleration):
+    def update(self, delta_time):
         # Эмиссия новых частиц
         self.accumulator += self.emission_rate * delta_time
         particles_to_emit = int(self.accumulator)
@@ -32,7 +34,7 @@ class Emitter(ABC):
         # Обновление существующих частиц
         alive_particles = []
         for particle in self.particles:
-            particle.update(delta_time, acceleration)
+            particle.update(delta_time)
             if particle.is_alive():
                 alive_particles.append(particle)
         self.particles = alive_particles
