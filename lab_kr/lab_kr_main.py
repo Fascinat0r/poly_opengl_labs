@@ -7,12 +7,11 @@ from lab_kr.particles.emitters.directed_emitter import DirectedEmitter
 from lab_kr.render_window import RenderWindow
 from lab_kr.scene import Scene
 from lab_kr.shapes.plane import Plane
-from lab_kr.shapes.sphere import Sphere
 
 
 def main():
     # Создаем окно рендеринга
-    window = RenderWindow(800, 600, b"Course Work")
+    window = RenderWindow(800, 600, b"Lab 3 with Shadows and Shapes")
 
     # Создаем сцену
     scene = Scene()
@@ -22,17 +21,17 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture = ImageTexture("../data/textures/emerald.jpg")
+    texture = ImageTexture("../data/textures/kanye.png")
     texture.load()
 
-    texture_cobblestone = ImageTexture("../data/textures/grassy_cobblestone.jpg")
+    texture_cobblestone = ImageTexture("../data/textures/bandera.jpg")
     texture_cobblestone.load()
 
-    pink_texture = FlatTexture(color=[255.0, 192.0, 203.0])
-    pink_texture.load()
+    blue_texture = FlatTexture(color=[80.0, 80.0, 255.0])
+    blue_texture.load()
 
-    peach_texture = FlatTexture(color=[255.0, 210.0, 180.0])
-    peach_texture.load()
+    red_texture = FlatTexture(color=[255.0, 80.0, 80.0])
+    red_texture.load()
 
     # Создаем направленный свет
     directional_light = DirectionalLight(direction=[-0.2, -1.0, -0.3],
@@ -59,34 +58,36 @@ def main():
     )
 
     # Создаем объект плоскости
-    floor = Plane(position=[0.0, 0.0, 0.0], scale=40.0, rotation=[0.0, 0.0, 0.0], material=floor_material)
+    floor = Plane(position=[0.0, 0.0, 0.0], scale=40.0, rotation=[0.0, 180.0, 0.0], material=floor_material)
     scene.add_object(floor)
 
-    sphere_material = Material(
+    # Создаем материалы для объектов
+    textured_material = Material(
         ambient=[0.1, 0.1, 0.1],
         diffuse=[0.8, 0.8, 0.8],
         specular=[0.5, 0.5, 0.5],
         shininess=32.0,
-        texture=pink_texture.texture_id,
-        transparent=False
+        texture=texture.texture_id,
+        transparent=True
     )
 
-    sphere = Sphere(position=[2.0, 0.5, 0.0], stacks=32, slices=32, material=sphere_material)
-    scene.add_object(sphere)
+    # Создаем объекты и применяем материалы
 
-    # КУРСОВАЯ РАБОТА
+    plane = Plane(position=[0.0, 5.0, 0.0], scale=10.0, rotation=[90.0, 180.0, .0], material=textured_material)
+    scene.add_object(plane)
+
     scene.initialize_particle_system()
-
     # Эмиттер – направленный источник
     cone_emitter = DirectedEmitter(
-        position=[0.0, 1.5, -1.5],
-        emission_rate=50,
-        max_particles=500,
-        speed_range=(2.0, 4.0),
-        size_range=(1.0, 3.0),
-        color=[255, 0, 0, 128],  # Красный цвет
+        position=[0.0, 8, 3],
+        emission_rate=100,
+        max_particles=1000,
+        speed_range=(6.0, 8.0),
+        size_range=(1.0, 5.0),
+        color=[255, 255, 255, 255],
         lifetime=3.0,
-        main_direction=[0.33, -0.1, 0.33]
+        main_direction=[0.5, 0, -1],  # Направление испускания частиц
+        max_angle=15.0  # максимальный угол отклонения от направления
     )
     scene.add_emitter_to_particle_system(cone_emitter)
 

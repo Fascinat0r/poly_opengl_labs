@@ -20,17 +20,10 @@ class Particle:
         # Рассчитываем, на сколько уменьшать скорость при каждом обновлении
         self.speed_decrement = glm.length(self.velocity) / self.lifetime
 
-    def update(self, delta_time):
-        # Уменьшаем длину вектора скорости, сохраняя направление
-        current_speed = glm.length(self.velocity)
-        new_speed = max(0.0, current_speed - self.speed_decrement * delta_time)
-        self.velocity = glm.normalize(self.velocity) * new_speed if current_speed > 0 else glm.vec3(0.0, 0.0, 0.0)
-
-        # Обновляем позицию
+    def update(self, delta_time, acceleration):
+        self.velocity += glm.vec3(*acceleration) * delta_time
         self.position += self.velocity * delta_time
         self.age += delta_time
-
-        # Обновляем след, если он есть
         if self.has_trail:
             self.trail.update(self.position)
 
