@@ -22,6 +22,9 @@ uniform DirLight dirLight;
 uniform sampler2D diffuseTexture;
 uniform sampler2D shadowMap;
 
+uniform vec4 particleColor;
+uniform bool useParticleColor;
+
 float ShadowCalculation(vec4 fragPosLightSpace)
 {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -29,7 +32,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
     vec4 texColor = texture(diffuseTexture, fs_in.TexCoords);
     if (texColor.a < 0.1)
-        return 0.0;
+    return 0.0;
 
     float closestDepth = texture(shadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
@@ -37,7 +40,7 @@ float ShadowCalculation(vec4 fragPosLightSpace)
     float shadow = currentDepth > closestDepth + 0.005 ? 1.0 : 0.0;
 
     if (projCoords.z > 1.0)
-        shadow = 0.0;
+    shadow = 0.0;
 
     return shadow;
 }
@@ -59,15 +62,20 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseColor)
 
 void main()
 {
+    if (useParticleColor) {
+        FragColor = particleColor;
+        return;
+    }
+
     vec3 norm = normalize(fs_in.Normal);
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
 
-   
+
     vec4 texColor = texture(diffuseTexture, fs_in.TexCoords);
 
-   
+
     if (texColor.a < 0.1)
-        discard;
+    discard;
 
    
     vec3 lighting = CalcDirLight(dirLight, norm, viewDir, texColor.rgb);

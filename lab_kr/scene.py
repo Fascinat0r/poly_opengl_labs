@@ -188,9 +188,6 @@ class Scene:
         for obj in self.objects:
             obj.render(shader)
 
-        if self.particle_system:
-            self.particle_system.render(shader)
-
     def initialize_particle_system(self):
         collision_handler = CollisionHandler(self)
         self.particle_system = ParticleSystem(self, collision_handler)

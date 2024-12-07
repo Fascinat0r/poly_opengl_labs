@@ -1,5 +1,4 @@
-# particles/emitter.py (продолжение)
-# Добавим в emitter.py или отдельный файл, но для простоты оставим здесь
+from lab_kr.materials.shader import Shader
 from lab_kr.particles.emitter import Emitter
 
 
@@ -18,6 +17,8 @@ class ParticleSystem:
             for particle in emitter.particles:
                 self.collision_handler.handle_collisions(particle)
 
-    def render(self, shader):
+    def render(self, shader: Shader):
+        shader.set_bool("useParticleColor", True)
         for emitter in self.emitters:
             emitter.render(shader)
+        shader.set_bool("useParticleColor", False)

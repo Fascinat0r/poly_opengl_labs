@@ -1,4 +1,4 @@
-# particles/emitter.py (продолжение)
+# particles/emitters/cone_emitter.py
 import math
 import random
 
@@ -13,7 +13,8 @@ class ConeEmitter(Emitter):
         super().__init__(position, emission_rate, max_particles)
         self.speed_range = speed_range
         self.size_range = size_range
-        self.color = color
+        # Нормализуем цвет, если он задан в диапазоне [0, 255]
+        self.color = glm.vec4(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3] / 255.0)
         self.lifetime = lifetime
 
     def emit_particle(self):

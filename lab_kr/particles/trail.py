@@ -2,6 +2,7 @@
 import glm
 
 from OpenGL.GL import *
+from lab_kr.materials.shader import Shader
 
 
 class Trail:
@@ -13,7 +14,7 @@ class Trail:
         self.positions.pop(0)
         self.positions.append(glm.vec3(*new_position))
 
-    def render(self, shader):
+    def render(self, shader: Shader):
         glBegin(GL_LINE_STRIP)
         for pos in self.positions:
             glVertex3f(pos.x, pos.y, pos.z)

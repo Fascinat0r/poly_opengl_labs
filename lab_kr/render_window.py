@@ -1,6 +1,8 @@
 # render_window.py
 from functools import partial
 
+import glm
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -27,6 +29,7 @@ class RenderWindow:
         # Инициализация шейдеров
         self.shader = Shader("../data/shaders/shading.vert", "../data/shaders/shading.frag")
         self.depth_shader = Shader("../data/shaders/depth.vert", "../data/shaders/depth.frag")
+        self.particle_shader = Shader("../data/shaders/particles.vert", "../data/shaders/particles.frag")
 
         # Включаем режим теста глубины
         glEnable(GL_DEPTH_TEST)
@@ -93,5 +96,21 @@ class RenderWindow:
         # Render Pass
         self.shader.use()
         self.scene.render_scene(self.shader)
+
+        # Рендеринг частиц
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glDepthMask(GL_FALSE)  # Отключаем запись в буфер глубины для частиц
+
+        self.particle_shader.use()
+        self.particle_shader.set_mat4("projection", self.scene.camera.get_projection_matrix())
+        self.particle_shader.set_mat4("view", self.scene.camera.get_view_matrix())
+        self.particle_shader.set_mat4("model", glm.mat4(1.0))  # Единичная матрица для мировых координат
+
+        if self.scene.particle_system:
+            self.scene.particle_system.render(self.particle_shader)
+
+        glDepthMask(GL_TRUE)  # Включаем запись в буфер глубины обратно
+        glDisable(GL_BLEND)
 
         glutSwapBuffers()

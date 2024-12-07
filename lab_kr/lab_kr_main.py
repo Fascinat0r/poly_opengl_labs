@@ -8,11 +8,8 @@ from lab_kr.particles.emitters.plane_emitter import PlaneEmitter
 from lab_kr.particles.emitters.point_emitter import PointEmitter
 from lab_kr.render_window import RenderWindow
 from lab_kr.scene import Scene
-from lab_kr.shapes.cone import Cone
-from lab_kr.shapes.octahedron import Octahedron
+from lab_kr.shapes.cube import Cube
 from lab_kr.shapes.plane import Plane
-from lab_kr.shapes.teapot import Teapot
-from lab_kr.shapes.torus import Torus
 
 
 def main():
@@ -77,51 +74,22 @@ def main():
         transparent=True
     )
 
-    glossy_material = Material(
-        ambient=[0.0, 0.0, 0.0],
-        diffuse=[0.55, 0.55, 0.55],
-        specular=[0.7, 0.7, 0.7],
-        shininess=32.0,
-        texture=pink_texture.texture_id,
-        transparent=False
-    )
-
-    diffuse_material = Material(
-        ambient=[0.1, 0.1, 0.1],
-        diffuse=[0.8, 0.8, 0.8],
-        specular=[0.5, 0.5, 0.5],
-        shininess=32.0,
-        texture=peach_texture.texture_id,
-        transparent=False
-    )
-
     # Создаем объекты и применяем материалы
-    textured_octahedron = Octahedron(position=[1.0, 2.0, -5.0], scale=2.0, rotation=[0.0, 0.0, 0.0],
-                                     material=textured_cube_material)
-    scene.add_object(textured_octahedron)
-
-    cone = Cone(base_radius=1.0, height=2.0, slices=20, position=[-3.0, 0.0, -5.0], scale=1.0,
-                rotation=[0.0, 0.0, 0.0], material=diffuse_material)
-    scene.add_object(cone)
-
-    teapot = Teapot(position=[3.0, 0.5, -4.0], scale=0.02, rotation=[-90.0, 0.0, 0.0], material=glossy_material)
-    scene.add_object(teapot)
-
-    torus = Torus(inner_radius=0.5, outer_radius=1.0, rings=30, sides=30, position=[-3.0, 1.0, -8.0],
-                  scale=1.0, rotation=[0.0, 0.0, 0.0], material=glossy_material)
-    scene.add_object(torus)
+    textured_cube = Cube(position=[0.0, 0.5, 0.0], scale=1.0, rotation=[0.0, 0.0, 0.0],
+                         material=textured_cube_material)
+    scene.add_object(textured_cube)
 
     # КУРСОВАЯ РАБОТА
     scene.initialize_particle_system()
 
     # Пример 1: Эмиттер – точка
     point_emitter = PointEmitter(
-        position=[0.0, 5.0, 0.0],
+        position=[0.0, 2.0, 0.0],
         emission_rate=100,
         max_particles=1000,
         speed_range=(1.0, 3.0),
         size_range=(2.0, 5.0),
-        color=[255, 255, 255, 128],  # Белый цвет
+        color=[255, 128, 255, 128],  # Белый цвет
         lifetime=5.0
     )
     scene.add_emitter_to_particle_system(point_emitter)
@@ -140,13 +108,15 @@ def main():
 
     # Пример 3: Эмиттер – плоскость
     plane_emitter = PlaneEmitter(
-        position=[3.0, 2.0, -4.0],
+        position=[3.0, 10.0, -4.0],
         emission_rate=75,
         max_particles=750,
         speed_range=(1.5, 3.5),
         size_range=(1.5, 4.0),
         color=[0, 255, 0, 128],  # Зеленый цвет
-        lifetime=4.0
+        lifetime=4.0,
+        width=10,
+        height=10
     )
     scene.add_emitter_to_particle_system(plane_emitter)
 
