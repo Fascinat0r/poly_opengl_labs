@@ -7,7 +7,8 @@ keys = {
     's': False,
     'd': False,
     'c': False,  # Для спуска вниз
-    ' ': False  # Для подъёма вверх (пробел)
+    ' ': False,  # Для подъёма вверх (пробел)
+    '1': False
 }
 
 # Начальные значения для мыши
@@ -31,6 +32,8 @@ def key_pressed(key, x, y):
         keys['c'] = True  # Спуск камеры
     if key == b' ':  # Пробел
         keys[' '] = True  # Подъём камеры
+    if key == b'1':
+        keys['1'] = True
 
 
 # Обработка отпусканий клавиш
@@ -49,6 +52,8 @@ def key_released(key, x, y):
         keys['c'] = False  # Остановка спуска
     if key == b' ':  # Пробел
         keys[' '] = False  # Остановка подъёма
+    if key == b'1':
+        keys['1'] = False
 
 
 # Обработка движения камеры
@@ -67,6 +72,11 @@ def handle_camera_movement(camera):
     if keys[' ']:
         camera.move_up()  # Подъём камеры вверх
 
+
+def handle_light_color_change(light):
+    """Изменение цвета источника света."""
+    if keys['1']:
+        light.change_color()
 
 # Создание обработчика движения мыши
 def create_mouse_movement_handler(camera):
