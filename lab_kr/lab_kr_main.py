@@ -3,16 +3,16 @@ from lab_kr.camera import Camera
 from lab_kr.light.directional_light import DirectionalLight
 from lab_kr.materials.material import Material
 from lab_kr.materials.textures import ImageTexture, FlatTexture
-from lab_kr.particles.emitters.directed_emitter import DirectedEmitter
+from lab_kr.particles.emitters.plane_emitter import PlaneEmitter
 from lab_kr.render_window import RenderWindow
 from lab_kr.scene import Scene
+from lab_kr.shapes.cube import Cube
 from lab_kr.shapes.plane import Plane
-from lab_kr.shapes.sphere import Sphere
 
 
 def main():
     # Создаем окно рендеринга
-    window = RenderWindow(800, 600, b"Course Work")
+    window = RenderWindow(800, 600, b"Lab 3 with Shadows and Shapes")
 
     # Создаем сцену
     scene = Scene()
@@ -22,17 +22,17 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture = ImageTexture("../data/textures/emerald.jpg")
-    texture.load()
+    texture1 = FlatTexture(color=[20, 50, 20])
+    texture1.load()
 
-    texture_cobblestone = ImageTexture("../data/textures/grassy_cobblestone.jpg")
-    texture_cobblestone.load()
+    texture2 = ImageTexture("../data/textures/mandala.jpg")
+    texture2.load()
 
-    pink_texture = FlatTexture(color=[255.0, 192.0, 203.0])
-    pink_texture.load()
+    mirt_texture = FlatTexture(color=[33.0, 66.0, 30.0])
+    mirt_texture.load()
 
-    peach_texture = FlatTexture(color=[255.0, 210.0, 180.0])
-    peach_texture.load()
+    terracota_texture = FlatTexture(color=[204.0, 78.0, 92.0])
+    terracota_texture.load()
 
     # Создаем направленный свет
     directional_light = DirectionalLight(direction=[-0.2, -1.0, -0.3],
@@ -54,7 +54,7 @@ def main():
         diffuse=[0.5, 0.5, 0.5],
         specular=[0.2, 0.2, 0.2],
         shininess=10.0,
-        texture=texture_cobblestone.texture_id,
+        texture=texture1.texture_id,
         transparent=False
     )
 
@@ -62,31 +62,56 @@ def main():
     floor = Plane(position=[0.0, 0.0, 0.0], scale=40.0, rotation=[0.0, 0.0, 0.0], material=floor_material)
     scene.add_object(floor)
 
-    sphere_material = Material(
+    # Создаем материалы для объектов
+    textured_cube_material = Material(
         ambient=[0.1, 0.1, 0.1],
         diffuse=[0.8, 0.8, 0.8],
         specular=[0.5, 0.5, 0.5],
         shininess=32.0,
-        texture=pink_texture.texture_id,
+        texture=texture2.texture_id,
+        transparent=True
+    )
+
+    glossy_material = Material(
+        ambient=[0.0, 0.0, 0.0],
+        diffuse=[0.55, 0.55, 0.55],
+        specular=[0.7, 0.7, 0.7],
+        shininess=32.0,
+        texture=mirt_texture.texture_id,
         transparent=False
     )
 
-    sphere = Sphere(position=[2.0, 0.5, 0.0], stacks=32, slices=32, material=sphere_material)
-    scene.add_object(sphere)
+    diffuse_material = Material(
+        ambient=[0.1, 0.1, 0.1],
+        diffuse=[0.8, 0.8, 0.8],
+        specular=[0.5, 0.5, 0.5],
+        shininess=32.0,
+        texture=terracota_texture.texture_id,
+        transparent=False
+    )
 
-    # КУРСОВАЯ РАБОТА
+    materials = [textured_cube_material, glossy_material, diffuse_material]
+
+    # Создаем объекты
+    for idx, material in enumerate(materials):
+        cube = Cube(position=[-2.0 + idx * 2.0, 15.0, 0.0], scale=1.0, material=material)
+        scene.add_object(cube)
+
+        # КУРСОВАЯ РАБОТА
     scene.initialize_particle_system()
 
     # Эмиттер – направленный источник
-    cone_emitter = DirectedEmitter(
-        position=[0.0, 1.5, -1.5],
-        emission_rate=50,
-        max_particles=500,
-        speed_range=(2.0, 4.0),
+    cone_emitter = PlaneEmitter(
+        position=[0.0, 20, 0],
+        emission_rate=100,
+        max_particles=1000,
+        speed_range=(0.0, 2.0),
         size_range=(1.0, 3.0),
-        color=[255, 0, 0, 128],  # Красный цвет
-        lifetime=3.0,
-        main_direction=[0.33, -0.1, 0.33]
+        color=[100, 100, 255, 255],
+        lifetime=5.0,
+        width=10,
+        height=10,
+        plane_normal=[0, -1, 0]
     )
     scene.add_emitter_to_particle_system(cone_emitter)
 
