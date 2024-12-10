@@ -24,7 +24,7 @@ class ConeEmitter(Emitter):
         :param height: Высота конуса.
         :param rotation: Вращение конуса (углы Эйлера в градусах).
         """
-        super().__init__(position, emission_rate, max_particles)
+        super().__init__(position, emission_rate, max_particles, acceleration=[0,0,0])
         self.speed_range = speed_range
         self.size_range = size_range
         self.color = glm.vec4(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3] / 255.0)

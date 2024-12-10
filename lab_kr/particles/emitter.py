@@ -16,7 +16,7 @@ class Emitter(ABC):
         self.particles: List[Particle] = []
         self.accumulator = 0.0  # Накопитель времени
 
-        self.acceleration = [0.0, 0.0, 0.0] if acceleration is None else acceleration
+        self.acceleration = [0.0, -9.81, 0.0] if acceleration is None else acceleration
 
     @abstractmethod
     def emit_particle(self):

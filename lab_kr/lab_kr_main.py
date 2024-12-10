@@ -3,9 +3,11 @@ from lab_kr.camera import Camera
 from lab_kr.light.directional_light import DirectionalLight
 from lab_kr.materials.material import Material
 from lab_kr.materials.textures import ImageTexture, FlatTexture
-from lab_kr.particles.emitters.directed_emitter import DirectedEmitter
+
+from lab_kr.particles.emitters.cone_emitter import ConeEmitter
 from lab_kr.render_window import RenderWindow
 from lab_kr.scene import Scene
+from lab_kr.shapes.cone import Cone
 from lab_kr.shapes.plane import Plane
 from lab_kr.shapes.sphere import Sphere
 
@@ -58,35 +60,56 @@ def main():
         transparent=False
     )
 
+    sphere_material = Material(
+        ambient=[0.2, 0.2, 0.2],
+        diffuse=[0.3, 0.3, 0.3],
+        specular=[0.8, 0.8, 0.8],
+        shininess=2.0,
+        texture=peach_texture.texture_id,
+        transparent=False
+    )
+
     # Создаем объект плоскости
     floor = Plane(position=[0.0, 0.0, 0.0], scale=40.0, rotation=[0.0, 0.0, 0.0], material=floor_material)
     scene.add_object(floor)
 
-    sphere_material = Material(
+    sphere = Sphere(position=[2.0, 2.0, 1.0], material=sphere_material)
+    scene.add_object(sphere)
+
+    # Создаем визуальный конус
+    cone_material = Material(
         ambient=[0.1, 0.1, 0.1],
-        diffuse=[0.8, 0.8, 0.8],
+        diffuse=[0.8, 0.5, 0.3],
         specular=[0.5, 0.5, 0.5],
         shininess=32.0,
-        texture=pink_texture.texture_id,
+        texture=texture.texture_id,
         transparent=False
     )
-
-    sphere = Sphere(position=[2.0, 0.5, 0.0], stacks=32, slices=32, material=sphere_material)
-    scene.add_object(sphere)
+    cone = Cone(
+        base_radius=1.0,
+        height=2.0,
+        slices=30,
+        position=[0.0, 0.0, 0.0],
+        rotation=[0.0, 0.0, 0.0],
+        material=cone_material
+    )
+    scene.add_object(cone)
 
     # КУРСОВАЯ РАБОТА
     scene.initialize_particle_system()
 
-    # Эмиттер – направленный источник
-    cone_emitter = DirectedEmitter(
-        position=[0.0, 1.5, -1.5],
-        emission_rate=50,
-        max_particles=500,
-        speed_range=(2.0, 4.0),
-        size_range=(1.0, 3.0),
-        color=[255, 0, 0, 128],  # Красный цвет
+    # Создаем эмиттер для конуса
+    cone_emitter = ConeEmitter(
+        position=cone.position,  # Позиция совпадает с вершиной конуса
+        rotation=cone.rotation,  # Передаем поворот конуса
+        emission_rate=100,
+        max_particles=1000,
+        speed_range=(1.0, 3.0),
+        size_range=(6.5, 7.5),
+        color=[50, 123, 240, 255],
         lifetime=3.0,
-        main_direction=[0.33, -0.1, 0.33]
+        base_radius=1.0,
+        height=2.0
     )
     scene.add_emitter_to_particle_system(cone_emitter)
 
