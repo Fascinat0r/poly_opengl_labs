@@ -8,7 +8,7 @@ from lab_kr.particles.emitter import Emitter
 from lab_kr.particles.particle import Particle
 
 
-class DirectedEmitter(Emitter):
+class ConeEmitter(Emitter):
     def __init__(self, position, emission_rate, max_particles, speed_range, size_range, color, lifetime,
                  main_direction=None, max_angle=15.0):
         """
