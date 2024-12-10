@@ -24,14 +24,17 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture_cobblestone = ImageTexture("../data/textures/grassy_cobblestone.jpg")
-    texture_cobblestone.load()
+    texture_floor = ImageTexture("../data/textures/floor.jpg")
+    texture_floor.load()
 
     texture_leafs = ImageTexture("../data/textures/leafs.png")
     texture_leafs.load()
 
-    glass_texture = FlatTexture([255, 255, 255, 105])
-    glass_texture.load()
+    texture_sand = ImageTexture("../data/textures/sand.jpg")
+    texture_sand.load()
+
+    texture_glass = FlatTexture([255, 255, 255, 55])
+    texture_glass.load()
 
     # Создаем направленный свет
     directional_light = DirectionalLight(direction=[-0.2, -1.0, -0.3],
@@ -53,17 +56,8 @@ def main():
         diffuse=[0.5, 0.5, 0.5],
         specular=[0.2, 0.2, 0.2],
         shininess=10.0,
-        texture=texture_cobblestone.texture_id,
+        texture=texture_floor.texture_id,
         transparent=False
-    )
-
-    sandwatch_material = Material(
-        ambient=[0.1, 0.1, 0.1],
-        diffuse=[0.8, 0.5, 0.3],
-        specular=[0.5, 0.5, 0.5],
-        shininess=32.0,
-        texture=glass_texture.texture_id,
-        transparent=True
     )
 
     cone_material = Material(
@@ -71,8 +65,17 @@ def main():
         diffuse=[0.8, 0.5, 0.3],
         specular=[0.5, 0.5, 0.5],
         shininess=32.0,
-        texture=texture_leafs.texture_id,
-        transparent=False
+        texture=texture_sand.texture_id,
+        transparent=True
+    )
+
+    sandwatch_material = Material(
+        ambient=[0.1, 0.1, 0.1],
+        diffuse=[0.8, 0.5, 0.3],
+        specular=[0.5, 0.5, 0.5],
+        shininess=32.0,
+        texture=texture_glass.texture_id,
+        transparent=True
     )
 
     # Создаем объект плоскости
@@ -85,31 +88,23 @@ def main():
         slices=30,
         position=[0.0, 0.0, 0.0],
         rotation=[0.0, 0.0, 0.0],
-        material=sandwatch_material
+        material=cone_material
     )
     scene.add_object(cone)
 
     cube = Cube(
-        position=[0.0, 3.0, 0.0],
+        position=[0.0, 6.0, 0.0],
+        scale=3,
         rotation=[0.0, 0.0, 0.0],
         material=cone_material
     )
     scene.add_object(cube)
 
-    sandwatch_material = Material(
-        ambient=[0.1, 0.1, 0.1],
-        diffuse=[0.8, 0.5, 0.3],
-        specular=[0.5, 0.5, 0.5],
-        shininess=32.0,
-        texture=glass_texture.texture_id,
-        transparent=True
-    )
-
     sandwatch = StlModel(
         stl_path="../data/models/hourglass.stl",
-        position=[3.25, 4.0, -8.1],
-        scale=0.05,
-        rotation=[90.0, 0.0, 0.0],
+        position=[0.0, -10.0, 0.0],
+        scale=0.1,
+        rotation=[0.0, 41.0, -70.0],
         material=sandwatch_material
     )
     scene.add_object(sandwatch)
@@ -124,8 +119,8 @@ def main():
         emission_rate=50,
         max_particles=500,
         speed_range=(1.0, 3.0),  # Скорость частиц
-        size_range=(1.5, 2.5),  # Размер частиц
-        color=[255, 0, 0, 255],  # Красный цвет
+        size_range=(3.4, 5.4),  # Размер частиц
+        color=[205, 205, 160, 255],  # Красный цвет
         lifetime=3.0,
         base_radius=1.0,
         height=2.0

@@ -151,9 +151,16 @@ class Scene:
 
         # Рендерим все объекты
         for obj in self.objects:
-            obj.render(depth_shader)
+            if not obj.material.transparent:  # Пропускаем прозрачные объекты
+                obj.render(depth_shader)
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0)
+
+    def render_transparent_objects(self, shader):
+        """Рендеринг только прозрачных объектов."""
+        for obj in self.objects:
+            if obj.material.transparent:
+                obj.render(shader)
 
     def render_scene(self, shader: Shader):
         """Основной проход рендеринга сцены с тенями."""
