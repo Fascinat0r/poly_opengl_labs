@@ -10,7 +10,7 @@ from lab_kr.animations.animation import Animation
 from lab_kr.light.directional_light import DirectionalLight  # Импортируйте новый класс
 from lab_kr.materials.depth_map import DepthMap
 from lab_kr.materials.shader import Shader
-from lab_kr.particles.attractor import AttractorHandler
+from lab_kr.particles.collision import CollisionHandler
 from lab_kr.particles.particle_system import ParticleSystem
 from lab_kr.shapes.shape import Shape
 
@@ -192,8 +192,8 @@ class Scene:
             obj.render(shader)
 
     def initialize_particle_system(self):
-        attractor_handler = AttractorHandler(self.objects, 3)
-        self.particle_system = ParticleSystem(attractor_handler)
+        collision_handler = CollisionHandler(self.objects)
+        self.particle_system = ParticleSystem(collision_handler)
 
     def add_emitter_to_particle_system(self, emitter):
         if self.particle_system is None:
