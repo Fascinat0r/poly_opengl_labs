@@ -86,22 +86,22 @@ class RenderWindow:
         # Обновляем анимации
         self.scene.update_animations()
 
+        # Включаем смешивание для прозрачности
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         # Рисуем оси координат и сетку
         self.scene.draw_grid()
         self.scene.draw_axes()
 
-        # Depth Pass
+        # Depth Pass (Создание карты теней)
         self.scene.render_depth_map(self.depth_shader)
 
-        # Render Pass
+        # Render Pass (Рендер объектов сцены)
         self.shader.use()
         self.scene.render_scene(self.shader)
 
         # Рендеринг частиц
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glDepthMask(GL_FALSE)  # Отключаем запись в буфер глубины для частиц
-
         self.particle_shader.use()
         self.particle_shader.set_mat4("projection", self.scene.camera.get_projection_matrix())
         self.particle_shader.set_mat4("view", self.scene.camera.get_view_matrix())
