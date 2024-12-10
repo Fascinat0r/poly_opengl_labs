@@ -18,13 +18,18 @@ class Particle:
         self.trail = Trail(self.position) if self.has_trail else None
 
         # Рассчитываем, на сколько уменьшать скорость при каждом обновлении
-        self.speed_decrement = glm.length(self.velocity) / self.lifetime
+        self.speed_increment = 10 * glm.length(self.velocity) / self.lifetime
 
-    def update(self, delta_time):
-        # Уменьшаем длину вектора скорости, сохраняя направление
+
+    def update(self, delta_time, acceleration):
+        self.velocity += glm.vec3(*acceleration) * delta_time
         current_speed = glm.length(self.velocity)
-        new_speed = max(0.0, current_speed - self.speed_decrement * delta_time)
-        self.velocity = glm.normalize(self.velocity) * new_speed if current_speed > 0 else glm.vec3(0.0, 0.0, 0.0)
+        new_speed = max(0, current_speed + self.speed_increment * delta_time)
+        self.velocity = glm.normalize(self.velocity) * new_speed
+        self.position += self.velocity * delta_time
+        self.age += delta_time
+        if self.has_trail:
+            self.trail.update(self.position)
 
         # Обновляем позицию
         self.position += self.velocity * delta_time
@@ -33,6 +38,7 @@ class Particle:
         # Обновляем след, если он есть
         if self.has_trail:
             self.trail.update(self.position)
+
 
     def is_alive(self):
         return self.age < self.lifetime
