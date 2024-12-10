@@ -61,11 +61,11 @@ class ConeEmitter(Emitter):
 
         # Нормаль на боковой поверхности (в локальной системе координат)
         local_normal = glm.vec3(
-            -self.base_radius * math.cos(theta) / self.height,  # X
-            self.base_radius,  # Y
-            -self.base_radius * math.sin(theta) / self.height  # Z
+            self.height * math.cos(theta),  # X радиальная составляющая
+            self.base_radius,  # Y наклонная составляющая (вверх)
+            self.height * math.sin(theta)  # Z радиальная составляющая
         )
-        local_normal = glm.normalize(local_normal)
+        local_normal = glm.normalize(local_normal)  # Нормализуем
 
         # Применяем матрицу модели для нормали (без смещения)
         world_normal = glm.normalize(glm.mat3(self.model_matrix) * local_normal)
