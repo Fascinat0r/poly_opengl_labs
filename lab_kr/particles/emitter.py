@@ -9,12 +9,14 @@ from lab_kr.particles.particle import Particle
 
 
 class Emitter(ABC):
-    def __init__(self, position, emission_rate, max_particles):
+    def __init__(self, position, emission_rate, max_particles, acceleration=None):
         self.position = glm.vec3(*position)
         self.emission_rate = emission_rate  # Частота эмиссии (частиц в секунду)
         self.max_particles = max_particles
         self.particles: List[Particle] = []
         self.accumulator = 0.0  # Накопитель времени
+
+        self.acceleration = [0.0, 0.0, 0.0] if acceleration is None else acceleration
 
     @abstractmethod
     def emit_particle(self):
@@ -34,7 +36,7 @@ class Emitter(ABC):
         # Обновление существующих частиц
         alive_particles = []
         for particle in self.particles:
-            particle.update(delta_time)
+            particle.update(delta_time, self.acceleration)
             if particle.is_alive():
                 alive_particles.append(particle)
         self.particles = alive_particles

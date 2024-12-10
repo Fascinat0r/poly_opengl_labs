@@ -1,17 +1,14 @@
 from typing import List
 
 from lab_kr.materials.shader import Shader
-from lab_kr.particles.collision import CollisionHandler
+from lab_kr.particles.attractor import AttractorHandler
 from lab_kr.particles.emitter import Emitter
 
 
 class ParticleSystem:
-    def __init__(self, collision_handler: CollisionHandler, acceleration=None):
-        if acceleration is None:
-            acceleration = [0.0, -9.81, 0.0]
+    def __init__(self, attractor_handler: AttractorHandler):
         self.emitters: List[Emitter] = []
-        self.collision_handler = collision_handler
-        self.acceleration = acceleration  # Общие ускорения, например, гравитация
+        self.attractor_handler = attractor_handler
 
     def add_emitter(self, emitter: Emitter):
         self.emitters.append(emitter)
@@ -20,7 +17,7 @@ class ParticleSystem:
         for emitter in self.emitters:
             emitter.update(delta_time)
             for particle in emitter.particles:
-                self.collision_handler.handle_collisions(particle)
+                self.attractor_handler.apply_attraction(particle)
 
     def render(self, shader: Shader):
         shader.set_bool("useParticleColor", True)
