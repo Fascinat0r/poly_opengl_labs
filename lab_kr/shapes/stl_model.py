@@ -5,10 +5,11 @@ from OpenGL.GL import *
 from lab_kr.shapes.shape import Shape
 
 
-class Dragon(Shape):
-    def __init__(self, position=[0.0, 0.0, 0.0], scale=1.0, rotation=[0.0, 0.0, 0.0], material=None):
+class StlModel(Shape):
+    def __init__(self, stl_path, position=[0.0, 0.0, 0.0], scale=1.0, rotation=[0.0, 0.0, 0.0], material=None):
         super().__init__(position, scale, rotation, material)
-        self.stl_path = "../data/models/dragon.stl"
+
+        self.stl_path = stl_path
         self.setup_mesh()
 
     def setup_mesh(self):
