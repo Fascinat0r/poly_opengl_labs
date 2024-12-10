@@ -64,5 +64,5 @@ class DirectedEmitter(Emitter):
             size=size,
             color=self.color,
             lifetime=self.lifetime,
-            has_trail=False
+            has_trail=True
         )

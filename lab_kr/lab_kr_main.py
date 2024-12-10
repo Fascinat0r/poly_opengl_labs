@@ -6,6 +6,7 @@ from lab_kr.materials.textures import ImageTexture, FlatTexture
 from lab_kr.particles.emitters.directed_emitter import DirectedEmitter
 from lab_kr.render_window import RenderWindow
 from lab_kr.scene import Scene
+from lab_kr.shapes.cube import Cube
 from lab_kr.shapes.plane import Plane
 from lab_kr.shapes.sphere import Sphere
 
@@ -71,8 +72,8 @@ def main():
         transparent=False
     )
 
-    sphere = Sphere(position=[2.0, 0.5, 0.0], stacks=32, slices=32, material=sphere_material)
-    scene.add_object(sphere)
+    cube = Cube(position=[2.0, 0.5, 0.0], material=sphere_material)
+    scene.add_object(cube)
 
     # КУРСОВАЯ РАБОТА
     scene.initialize_particle_system()
@@ -83,7 +84,7 @@ def main():
         emission_rate=50,
         max_particles=500,
         speed_range=(2.0, 4.0),
-        size_range=(1.0, 3.0),
+        size_range=(2.0, 4.0),
         color=[255, 0, 0, 128],  # Красный цвет
         lifetime=3.0,
         main_direction=[0.33, -0.1, 0.33]
