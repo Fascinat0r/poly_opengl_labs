@@ -36,9 +36,12 @@ class Particle:
     def is_alive(self):
         return self.age < self.lifetime
 
+    def get_transparency(self):
+        return 1.0 - self.age/self.lifetime
+
     def render(self, shader):
         # Устанавливаем цвет частицы с текущей прозрачностью
-        shader.set_vec4("particleColor", glm.vec4(self.color.x, self.color.y, self.color.z, self.color.w))
+        shader.set_vec4("particleColor", glm.vec4(self.color.x, self.color.y, self.color.z, self.get_transparency()))
         # Устанавливаем размер точки
         glPointSize(self.size)
         # Рендерим частицу как точку
