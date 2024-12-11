@@ -6,7 +6,7 @@ from lab_kr.materials.shader import Shader
 
 
 class Trail:
-    def __init__(self, initial_position, length=5):
+    def __init__(self, initial_position, length=8):
         self.positions = [glm.vec3(*initial_position)] * length
         self.length = length
 

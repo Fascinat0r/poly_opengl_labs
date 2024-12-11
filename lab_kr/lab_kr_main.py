@@ -11,7 +11,7 @@ from lab_kr.shapes.plane import Plane
 
 def main():
     # Создаем окно рендеринга
-    window = RenderWindow(800, 600, b"Lab 3 with Shadows and Shapes")
+    window = RenderWindow(800, 600, b"Lab Puta Madre")
 
     # Создаем сцену
     scene = Scene()
