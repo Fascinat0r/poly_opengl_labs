@@ -33,7 +33,7 @@ def main():
     pink_texture = FlatTexture(color=[255.0, 192.0, 203.0])
     pink_texture.load()
 
-    peach_texture = FlatTexture(color=[255.0, 210.0, 180.0])
+    peach_texture = FlatTexture(color=[255.0, 210.0, 180.0, 255.0])
     peach_texture.load()
 
     # Создаем направленный свет
