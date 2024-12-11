@@ -88,9 +88,9 @@ def main():
     cone_emitter = ConeEmitter(
         position=cone.position,  # Позиция совпадает с вершиной конуса
         rotation=cone.rotation,  # Передаем поворот конуса
-        emission_rate=50,
-        max_particles=500,
-        speed_range=(3.0, 5.0),  # Скорость частиц
+        emission_rate=200,
+        max_particles=1000,
+        speed_range=(0.1, 0.2),  # Скорость частиц
         size_range=(2.5, 4.5),  # Размер частиц
         color=[0, 0, 255, 255],  # Красный цвет
         lifetime=3.0,
