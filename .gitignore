@@ -7,7 +7,7 @@ pyopengl
 *.rar
 *.zip
 *.tar
-
+/tex
 **/*.sh
 **/all_files.txt
 

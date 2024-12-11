@@ -5,7 +5,7 @@ from pathlib import Path
 from pathspec import PathSpec
 
 # Настройки
-allowed_extensions = {".py", ".sh", ".md", ".frag", ".vert"}  # Допустимые расширения файлов
+allowed_extensions = {".py", ".frag", ".vert"}  # Допустимые расширения файлов
 ignore_folders = {"venv", "__pycache__", "dist"}  # Папки, которые нужно игнорировать
 
 # Папка для сохранения .tex файлов
@@ -80,7 +80,9 @@ def create_latex_file(folder, output_file, gitignore_spec):
                 try:
                     with open(file_path, "r", encoding="utf-8") as f:
                         content = f.read()
-                    latex_file.write(content)
+                    # Удаляем комментарии из содержимого
+                    content_without_comments = remove_comments(content)
+                    latex_file.write(content_without_comments)
                 except Exception as e:
                     latex_file.write(f"Error reading file: {e}")
                 latex_file.write("\n\\end{lstlisting}\n")
