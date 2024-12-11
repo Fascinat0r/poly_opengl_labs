@@ -31,8 +31,8 @@ def main():
     texture = ImageTexture("../data/textures/wool.jpg")
     texture.load()
 
-    texture_cobblestone = ImageTexture("../data/textures/grass.jpg")
-    texture_cobblestone.load()
+    texture_ground = ImageTexture("../data/textures/grass.jpg")
+    texture_ground.load()
 
     blue_texture = FlatTexture(color=[80.0, 80.0, 255.0])
     blue_texture.load()
@@ -60,7 +60,7 @@ def main():
         diffuse=[0.5, 0.5, 0.5],
         specular=[0.2, 0.2, 0.2],
         shininess=10.0,
-        texture=texture_cobblestone.texture_id,
+        texture=texture_ground.texture_id,
         transparent=False
     )
 

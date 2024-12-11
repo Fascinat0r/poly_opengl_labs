@@ -25,8 +25,8 @@ def main():
     texture = ImageTexture("../data/textures/emerald.jpg")
     texture.load()
 
-    texture_cobblestone = ImageTexture("../data/textures/grassy_cobblestone.jpg")
-    texture_cobblestone.load()
+    texture_ground = ImageTexture("../data/textures/grassy_cobblestone.jpg")
+    texture_ground.load()
 
     pink_texture = FlatTexture(color=[255.0, 192.0, 203.0])
     pink_texture.load()
@@ -54,7 +54,7 @@ def main():
         diffuse=[0.5, 0.5, 0.5],
         specular=[0.2, 0.2, 0.2],
         shininess=10.0,
-        texture=texture_cobblestone.texture_id,
+        texture=texture_ground.texture_id,
         transparent=False
     )
 

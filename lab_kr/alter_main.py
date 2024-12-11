@@ -24,11 +24,11 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture_cobblestone = ImageTexture("../data/textures/grassy_cobblestone.jpg")
-    texture_cobblestone.load()
+    texture_ground = ImageTexture("../data/textures/floor.jpg")
+    texture_ground.load()
 
-    texture_leafs = ImageTexture("../data/textures/leafs.png")
-    texture_leafs.load()
+    texture_purple = ImageTexture("../data/textures/purple.png")
+    texture_purple.load()
 
 
     # Создаем направленный свет
@@ -51,7 +51,7 @@ def main():
         diffuse=[0.5, 0.5, 0.5],
         specular=[0.2, 0.2, 0.2],
         shininess=10.0,
-        texture=texture_cobblestone.texture_id,
+        texture=texture_ground.texture_id,
         transparent=False
     )
 
@@ -65,8 +65,8 @@ def main():
         diffuse=[0.8, 0.5, 0.3],
         specular=[0.5, 0.5, 0.5],
         shininess=32.0,
-        texture=texture_leafs.texture_id,
-        transparent=False
+        texture=texture_purple.texture_id,
+        transparent=True
     )
     cone = Cone(
         base_radius=1.0,
@@ -81,7 +81,7 @@ def main():
     # КУРСОВАЯ РАБОТА
     scene.initialize_particle_system()
 
-    point = Point(position=[0.0, 3.0, 0.0], size=15.0, color=[1.0, 0.0, 0.0, 1.0])  # Красная точка
+    point = Point(position=[0.0, 3.0, 0.0], size=15.0, color=[255.0, 255.0, 0.0, 255.0])  # Красная точка
     scene.add_object(point)
 
     # Создаем эмиттер для конуса
@@ -90,9 +90,9 @@ def main():
         rotation=cone.rotation,  # Передаем поворот конуса
         emission_rate=50,
         max_particles=500,
-        speed_range=(1.0, 3.0),  # Скорость частиц
-        size_range=(6.5, 7.5),  # Размер частиц
-        color=[0, 0, 0, 255],  # Красный цвет
+        speed_range=(3.0, 5.0),  # Скорость частиц
+        size_range=(2.5, 4.5),  # Размер частиц
+        color=[0, 0, 255, 255],  # Красный цвет
         lifetime=3.0,
         base_radius=1.0,
         height=2.0

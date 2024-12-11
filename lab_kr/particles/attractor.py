@@ -52,4 +52,4 @@ class AttractorHandler:
 
         # Экспоненциальное затухание: сила затухает плавно по формуле F = e^(-k * distance)
         k = 5.0 / self.range_of_effect  # Коэффициент для настройки скорости затухания
-        return math.exp(-k * distance) * 10
+        return math.exp(-k * distance) * 20

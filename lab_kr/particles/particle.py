@@ -22,7 +22,7 @@ class Particle:
 
 
     def update(self, delta_time, acceleration):
-        self.color = self.color + glm.vec4(0, 1 * delta_time, 0, 0)
+        self.color = self.color + glm.vec4( 1 * delta_time, 0,0-delta_time, 0)
 
         self.velocity += glm.vec3(*acceleration) * delta_time
         current_speed = glm.length(self.velocity)
