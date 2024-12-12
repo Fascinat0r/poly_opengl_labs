@@ -28,7 +28,7 @@ class Camera:
 
     def get_projection_matrix(self):
         """Возвращает матрицу проекции камеры."""
-        return glm.perspective(glm.radians(self.zoom), self.aspect_ratio, 0.1, 100.0)
+        return glm.perspective(glm.radians(self.zoom), 1, 0.1, 100.0)
 
     def process_keyboard(self, direction, delta_time):
         """Обрабатывает ввод с клавиатуры для перемещения камеры."""
