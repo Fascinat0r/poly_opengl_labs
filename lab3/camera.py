@@ -5,7 +5,7 @@ import glm
 
 
 class Camera:
-    def __init__(self, position, up, yaw, pitch, aspect_ratio=4/3):
+    def __init__(self, position, up, yaw, pitch, zoom=45.0, aspect_ratio=4 / 3):
         self.position = glm.vec3(*position)  # Позиция камеры
         self.up = glm.vec3(*up)  # Вектор "вверх"
         self.front = glm.vec3(0.0, 0.0, -1.0)  # Вектор, куда направлена камера (по умолчанию)
@@ -16,7 +16,8 @@ class Camera:
         self.pitch = pitch  # Угол наклона камеры (вверх/вниз)
         self.speed = 5.0  # Скорость перемещения камеры
         self.sensitivity = 0.1  # Чувствительность к движению мыши
-        self.zoom = 45.0  # Угол обзора
+        self.zoom = zoom  # Угол обзора
+        self.max_zoom = zoom
         self.aspect_ratio = aspect_ratio  # Соотношение сторон
 
         # Вычисляем начальные векторы на основе углов yaw и pitch
@@ -28,7 +29,7 @@ class Camera:
 
     def get_projection_matrix(self):
         """Возвращает матрицу проекции камеры."""
-        return glm.perspective(glm.radians(self.zoom), self.aspect_ratio, 0.1, 100.0)
+        return glm.perspective(glm.radians(self.zoom), 1, 0.1, 100.0)
 
     def process_keyboard(self, direction, delta_time):
         """Обрабатывает ввод с клавиатуры для перемещения камеры."""
@@ -69,8 +70,8 @@ class Camera:
         self.zoom -= y_offset
         if self.zoom < 1.0:
             self.zoom = 1.0
-        if self.zoom > 45.0:
-            self.zoom = 45.0
+        if self.zoom > self.max_zoom:
+            self.zoom = self.max_zoom
 
     def update_camera_vectors(self):
         """Обновляет векторы front, right и up камеры."""
