@@ -75,9 +75,13 @@ class RenderWindow:
         glViewport(0, 0, self.width, self.height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(45, aspect_ratio, 0.1, 100.0)
+        gluPerspective(self.scene.camera.zoom, aspect_ratio, 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
-        glutWarpPointer(self.width // 2, self.height // 2)
+
+        # При взаимодействии с окном в режиме нажатой клавиши Alt, при попытке изменить размер окна,
+        # курсор будет сдвинут в середину этого окна. Чтобы можно было нормально изменять размер окна,
+        # данная строка должна быть закомментирована.
+        # glutWarpPointer(self.width // 2, self.height // 2)
 
     def render(self):
         if not self.scene or not self.shader or not self.depth_shader:
