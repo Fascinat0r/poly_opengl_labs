@@ -1,4 +1,5 @@
 import glm
+from OpenGL.GLUT import glutLeaveMainLoop
 from OpenGL.raw.GLUT import glutWarpPointer
 from lab_kr.camera import Camera
 
@@ -27,6 +28,9 @@ def key_pressed(key, x, y):
     """Обработка нажатий клавиш."""
     global keys, toggle_pressed
     keycode = ord(key)
+    if keycode == 27:  # ESC
+        glutLeaveMainLoop()
+        return
     if keycode in keys:
         keys[keycode] = True
     elif keycode == ord('t') and not toggle_pressed['t']:
