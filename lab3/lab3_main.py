@@ -100,16 +100,8 @@ def main():
         cube = Cube(position=[-2.0 + idx * 2.0, 1.0, 0.0], scale=1.0, material=material)
         scene.add_object(cube)
 
-        sphere = Sphere(position=[-2.0 + idx * 2.0, 1.0, 2.0], scale=1.0, material=material)
+        sphere = Sphere(position=[-2.0 + idx * 2.0, 4.0, 2.0], scale=1.0, material=material)
         scene.add_object(sphere)
-
-        move_animation = LoopedMovementAnimation(target_object=sphere,
-                                                 start_position=[-2.0 + idx * 2.0, 3.0, 2.0],
-                                                 end_position=[-2.0 + idx * 2.0, 3.0, -2.0],
-                                                 speeds=[0.0, 0.0, 1.0],
-                                                 tolerance=0.01)
-        move_animation.start()
-        scene.add_animation(move_animation)
 
     # Устанавливаем сцену в окно рендеринга
     window.set_scene(scene)
