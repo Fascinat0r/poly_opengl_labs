@@ -75,7 +75,7 @@ class RenderWindow:
         glViewport(0, 0, self.width, self.height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(45, aspect_ratio, 0.1, 100.0)
+        gluPerspective(self.scene.camera.zoom, aspect_ratio, 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
 
         # При взаимодействии с окном в режиме нажатой клавиши Alt, при попытке изменить размер окна,
