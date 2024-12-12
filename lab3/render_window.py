@@ -72,9 +72,13 @@ class RenderWindow:
         glViewport(0, 0, self.width, self.height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
-        gluPerspective(45, aspect_ratio, 0.1, 100.0)
+        gluPerspective(self.scene.camera.zoom, aspect_ratio, 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
-        glutWarpPointer(self.width // 2, self.height // 2)
+
+        # При взаимодействии с окном в режиме нажатой клавиши Alt, при попытке изменить размер окна,
+        # курсор будет сдвинут в середину этого окна. Чтобы можно было нормально изменять размер окна,
+        # данная строка должна быть закомментирована.
+        # glutWarpPointer(self.width // 2, self.height // 2)
 
     def render(self):
         if not self.scene or not self.shader or not self.depth_shader:
@@ -83,15 +87,21 @@ class RenderWindow:
         # Обновляем анимации
         self.scene.update_animations()
 
+        # Включаем смешивание для прозрачности
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         # Рисуем оси координат и сетку
         self.scene.draw_grid()
         self.scene.draw_axes()
 
-        # Depth Pass
+        # Depth Pass (Создание карты теней)
         self.scene.render_depth_map(self.depth_shader)
 
-        # Render Pass
+        # Render Pass (Рендер объектов сцены)
         self.shader.use()
         self.scene.render_scene(self.shader)
+
+        glDepthMask(GL_TRUE)  # Включаем запись в буфер глубины обратно
+        glDisable(GL_BLEND)
 
         glutSwapBuffers()

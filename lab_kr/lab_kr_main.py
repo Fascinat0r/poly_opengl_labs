@@ -12,13 +12,15 @@ from lab_kr.shapes.plane import Plane
 
 def main():
     # Создаем окно рендеринга
-    window = RenderWindow(800, 600, b"Course Work")
+    width, height = 1024, 768
+    window = RenderWindow(width, height, b"Course Work")
 
     # Создаем сцену
     scene = Scene()
 
     # Создаем камеру
-    camera = Camera(position=[0.0, 2.0, 5.0], up=[0.0, 1.0, 0.0], yaw=-90.0, pitch=-20.0)
+    camera = Camera(position=[0.0, 2.0, 5.0], up=[0.0, 1.0, 0.0],
+                    yaw=-75.0, pitch=-5.0, zoom=60.0, aspect_ratio=width/height)
     scene.set_camera(camera)
 
     # Загрузка текстур

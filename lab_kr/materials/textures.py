@@ -68,7 +68,7 @@ class FlatTexture(Texture):
 
     def __init__(self, color):
         """
-        :param color: Цвет текстуры в формате [R, G, B].
+        :param color: Цвет текстуры в формате [R, G, B, A].
         """
         super().__init__()
         self.color = color
@@ -76,10 +76,10 @@ class FlatTexture(Texture):
     def load(self):
         """Создает плоскую текстуру с указанным цветом."""
         # Формируем текстурные данные для 1x1 текстуры
-        img_data = np.array(self.color * 3, dtype=np.uint8)  # RGB-цвет
+        img_data = np.array(self.color * 3, dtype=np.uint8)  # RGBA-цвет
 
         glBindTexture(GL_TEXTURE_2D, self.texture_id)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, img_data)
         glGenerateMipmap(GL_TEXTURE_2D)
 
         # Установка параметров текстуры

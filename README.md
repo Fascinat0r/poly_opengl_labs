@@ -20,7 +20,6 @@ poly_opengl_labs/
 
 ```bash
 pip install -r requirements.txt
-```
 
 ## Запуск лаб
 
