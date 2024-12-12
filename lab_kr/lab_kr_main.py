@@ -24,7 +24,7 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture1 = FlatTexture(color=[20, 50, 20])
+    texture1 = FlatTexture(color=[20, 50, 20, 255])
     texture1.load()
 
     texture2 = ImageTexture("../data/textures/mandala.jpg")
@@ -56,8 +56,7 @@ def main():
         diffuse=[0.5, 0.5, 0.5],
         specular=[0.2, 0.2, 0.2],
         shininess=10.0,
-        texture=texture1.texture_id,
-        transparent=False
+        texture=texture1.texture_id
     )
 
     # Создаем объект плоскости
@@ -96,7 +95,7 @@ def main():
 
     # Создаем объекты
     for idx, material in enumerate(materials):
-        cube = Cube(position=[-2.0 + idx * 2.0, 15.0, 0.0], scale=1.0, material=material)
+        cube = Cube(position=[-2.0 + idx * 2.0, 3.0, 0.0], scale=1.0, material=material)
         scene.add_object(cube)
 
         # КУРСОВАЯ РАБОТА
@@ -104,15 +103,15 @@ def main():
 
     # Эмиттер – направленный источник
     cone_emitter = PlaneEmitter(
-        position=[0.0, 20, 0],
-        emission_rate=100,
-        max_particles=1000,
+        position=[0.0, 5, 0],
+        emission_rate=200,
+        max_particles=2000,
         speed_range=(0.0, 2.0),
-        size_range=(1.0, 3.0),
+        size_range=(3.0, 5.0),
         color=[100, 100, 255, 255],
-        lifetime=5.0,
-        width=10,
-        height=10,
+        lifetime=2.0,
+        width=5,
+        height=5,
         plane_normal=[0, -1, 0]
     )
     scene.add_emitter_to_particle_system(cone_emitter)
