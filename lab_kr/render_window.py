@@ -54,6 +54,7 @@ class RenderWindow:
         glutMainLoop()
 
     def update(self, value):
+        handle_emitters_options(self.scene.particle_system.emitters)  # Обновляем настройки эмиттеров
         handle_camera_movement(self.scene.camera)  # Обновляем позицию камеры
         reset_mouse_position(self.width, self.height)  # Возвращаем мышь в центр экрана
         glutPostRedisplay()
