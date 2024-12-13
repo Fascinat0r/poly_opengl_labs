@@ -30,10 +30,10 @@ def main():
     scene.add_light(directional_light)
 
     # Загрузка текстур
-    texture_cylinder = ImageTexture('data/textures/grey-metal.jpg')
+    texture_cylinder = ImageTexture('../data/textures/grey-metal.jpg')
     texture_cylinder.load()
 
-    texture_plane = ImageTexture('data/textures/grey-bricks.jpg')
+    texture_plane = ImageTexture('../data/textures/grey-bricks.jpg')
     texture_plane.load()
 
     # Создаем материал для пола
