@@ -57,10 +57,10 @@ class Camera:
 
         # Ограничение наклона камеры
         if constrain_pitch:
-            if self.pitch > 89.0:
-                self.pitch = 89.0
-            if self.pitch < -89.0:
-                self.pitch = -89.0
+            if self.pitch >= 90.0:
+                self.pitch = 90.0
+            if self.pitch <= -90.0:
+                self.pitch = -90.0
 
         # Обновляем векторы камеры
         self.update_camera_vectors()
