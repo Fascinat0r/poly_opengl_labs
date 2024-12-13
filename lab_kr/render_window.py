@@ -1,6 +1,5 @@
 # render_window.py
 import glm
-
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
@@ -89,8 +88,7 @@ class RenderWindow:
         # Первый проход с перспективы света для составления карты глубины для теней
         self.scene.render_depth_map(self.depth_shader)
 
-        # Render Pass (Рендер объектов сцены)
-        self.shader.use()
+        # Второй проход с перспективы камеры, используя составленную карту глубины теней
         self.scene.render_scene(self.shader)
 
         # Рендеринг частиц
