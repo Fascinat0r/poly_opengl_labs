@@ -1,6 +1,4 @@
 # render_window.py
-from functools import partial
-
 import glm
 
 from OpenGL.GL import *
@@ -49,7 +47,7 @@ class RenderWindow:
         glutKeyboardFunc(key_pressed)  # Обычные клавиши
         glutKeyboardUpFunc(key_released)  # Отпускание обычных клавиш
         # Обработчик движения мыши с учётом размеров окна
-        glutPassiveMotionFunc(create_mouse_movement_handler(self.scene.camera, partial(self.get_window_size)))
+        glutPassiveMotionFunc(create_mouse_movement_handler(self.scene.camera, self.get_window_size))
 
         # Запускаем таймер для обновления сцены
         glutTimerFunc(16, self.update, 0)
