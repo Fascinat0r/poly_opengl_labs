@@ -65,14 +65,6 @@ class Camera:
         # Обновляем векторы камеры
         self.update_camera_vectors()
 
-    def process_mouse_scroll(self, y_offset):
-        """Обрабатывает прокрутку мыши для изменения угла обзора."""
-        self.zoom -= y_offset
-        if self.zoom < 1.0:
-            self.zoom = 1.0
-        if self.zoom > self.max_zoom:
-            self.zoom = self.max_zoom
-
     def update_camera_vectors(self):
         """Обновляет векторы front, right и up камеры."""
         front = glm.vec3()
