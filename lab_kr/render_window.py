@@ -4,8 +4,10 @@ import glm
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-from lab_kr.handlers import key_pressed, key_released, create_mouse_movement_handler, handle_camera_movement, \
-    reset_mouse_position
+
+from lab_kr.handlers import (key_pressed, key_released,
+                      create_mouse_movement_handler, handle_camera_movement, reset_mouse_position,
+                      handle_emitters_options)
 from lab_kr.materials.shader import Shader
 from lab_kr.scene import Scene
 
@@ -25,9 +27,9 @@ class RenderWindow:
         glutCreateWindow(self.title)
 
         # Инициализация шейдеров
-        self.shader = Shader("../data/shaders/shading.vert", "../data/shaders/shading.frag")
-        self.depth_shader = Shader("../data/shaders/depth.vert", "../data/shaders/depth.frag")
-        self.particle_shader = Shader("../data/shaders/particles.vert", "../data/shaders/particles.frag")
+        self.shader = Shader('../data/shaders/shading.vert', '../data/shaders/shading.frag')
+        self.depth_shader = Shader('../data/shaders/depth.vert', '../data/shaders/depth.frag')
+        self.particle_shader = Shader('../data/shaders/particles.vert', '../data/shaders/particles.frag')
 
         # Включаем режим теста глубины
         glEnable(GL_DEPTH_TEST)
@@ -44,7 +46,7 @@ class RenderWindow:
         glutReshapeFunc(self.reshape)
         glutDisplayFunc(self.render)
         glutIdleFunc(self.render)
-        glutKeyboardFunc(key_pressed)  # Обычные клавиши
+        glutKeyboardFunc(key_pressed)  # Нажатие обычных клавиш
         glutKeyboardUpFunc(key_released)  # Отпускание обычных клавиш
         # Обработчик движения мыши с учётом размеров окна
         glutPassiveMotionFunc(create_mouse_movement_handler(self.scene.camera, self.get_window_size))
@@ -77,11 +79,6 @@ class RenderWindow:
         gluPerspective(self.scene.camera.zoom, aspect_ratio, 0.1, 100.0)
         glMatrixMode(GL_MODELVIEW)
 
-        # При взаимодействии с окном в режиме нажатой клавиши Alt, при попытке изменить размер окна,
-        # курсор будет сдвинут в середину этого окна. Чтобы можно было нормально изменять размер окна,
-        # данная строка должна быть закомментирована.
-        # glutWarpPointer(self.width // 2, self.height // 2)
-
     def render(self):
         if not self.scene or not self.shader or not self.depth_shader:
             return
@@ -106,9 +103,9 @@ class RenderWindow:
         # Рендеринг частиц
         glDepthMask(GL_FALSE)  # Отключаем запись в буфер глубины для частиц
         self.particle_shader.use()
-        self.particle_shader.set_mat4("projection", self.scene.camera.get_projection_matrix())
-        self.particle_shader.set_mat4("view", self.scene.camera.get_view_matrix())
-        self.particle_shader.set_mat4("model", glm.mat4(1.0))  # Единичная матрица для мировых координат
+        self.particle_shader.set_mat4('projection', self.scene.camera.get_projection_matrix())
+        self.particle_shader.set_mat4('view', self.scene.camera.get_view_matrix())
+        self.particle_shader.set_mat4('model', glm.mat4(1.0))  # Единичная матрица для мировых координат
 
         if self.scene.particle_system:
             self.scene.particle_system.render(self.particle_shader)

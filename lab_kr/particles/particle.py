@@ -1,7 +1,7 @@
 # particles/particle.py
 import glm
-
 from OpenGL.GL import *
+
 from lab_kr.particles.trail import Trail
 
 

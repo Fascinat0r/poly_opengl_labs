@@ -1,7 +1,7 @@
 # particles/trail.py
 import glm
-
 from OpenGL.GL import *
+
 from lab_kr.materials.shader import Shader
 
 

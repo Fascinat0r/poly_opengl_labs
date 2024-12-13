@@ -1,13 +1,11 @@
 # scene.py
-from math import sqrt
 from typing import List
 
 import glm
-
 from OpenGL.GL import *
 from OpenGL.GLUT import *
-from lab_kr.animations.animation import Animation
-from lab_kr.light.directional_light import DirectionalLight  # Импортируйте новый класс
+
+from lab_kr.light.directional_light import DirectionalLight
 from lab_kr.materials.depth_map import DepthMap
 from lab_kr.materials.shader import Shader
 from lab_kr.particles.anti_attractor import AntiAttractorHandler
@@ -43,7 +41,7 @@ class Scene:
         """Устанавливаем камеру для сцены."""
         self.camera = camera
 
-    def add_light(self, light: DirectionalLight):  # Измените тип
+    def add_light(self, light: DirectionalLight):
         """Добавляем направленный источник света в сцену."""
         self.lights.append(light)
 
@@ -72,7 +70,7 @@ class Scene:
         depth_shader.use()
 
         if not self.lights:
-            print("No lights in the scene for depth map.")
+            print('No lights in the scene for depth map.')
             return
 
         # Предполагаем, что у нас один направленный свет
@@ -88,7 +86,7 @@ class Scene:
         light_position = glm.vec3(-light_dir.x * 10.0, -light_dir.y * 10.0, -light_dir.z * 10.0)
         light_view = glm.lookAt(light_position, glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 1.0, 0.0))
         light_space_matrix = light_projection * light_view
-        depth_shader.set_mat4("lightSpaceMatrix", light_space_matrix)
+        depth_shader.set_mat4('lightSpaceMatrix', light_space_matrix)
 
         # Рендерим все объекты
         for obj in self.objects:
@@ -102,11 +100,11 @@ class Scene:
 
         # Устанавливаем матрицу вида и проекции от камеры
         shader.use()
-        shader.set_mat4("view", self.camera.get_view_matrix())
-        shader.set_mat4("projection", self.camera.get_projection_matrix())
+        shader.set_mat4('view', self.camera.get_view_matrix())
+        shader.set_mat4('projection', self.camera.get_projection_matrix())
 
         if not self.lights:
-            print("No lights added to the scene.")
+            print('No lights added to the scene.')
             return
 
         # Предполагаем, что у нас один направленный свет
@@ -118,15 +116,15 @@ class Scene:
         light_position = glm.vec3(-light_dir.x * 10.0, -light_dir.y * 10.0, -light_dir.z * 10.0)
         light_view = glm.lookAt(light_position, glm.vec3(0.0, 0.0, 0.0), glm.vec3(0.0, 1.0, 0.0))
         light_space_matrix = light_projection * light_view
-        shader.set_mat4("lightSpaceMatrix", light_space_matrix)
+        shader.set_mat4('lightSpaceMatrix', light_space_matrix)
 
         # Передаём параметры направленного света
         light.apply(shader)
-        shader.set_vec3("viewPos", self.camera.position)
+        shader.set_vec3('viewPos', self.camera.position)
 
         # Привязываем карту глубины
         self.depth_map.bind_for_reading(unit=1)
-        shader.set_int("shadowMap", 1)
+        shader.set_int('shadowMap', 1)
 
         # Рендерим объекты
         for obj in self.objects:

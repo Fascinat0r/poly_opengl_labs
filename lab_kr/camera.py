@@ -34,17 +34,17 @@ class Camera:
     def process_keyboard(self, direction, delta_time):
         """Обрабатывает ввод с клавиатуры для перемещения камеры."""
         velocity = self.speed * delta_time
-        if direction == "FORWARD":
+        if direction == 'FORWARD':
             self.position += self.front * velocity
-        if direction == "BACKWARD":
+        if direction == 'BACKWARD':
             self.position -= self.front * velocity
-        if direction == "LEFT":
+        if direction == 'LEFT':
             self.position -= self.right * velocity
-        if direction == "RIGHT":
+        if direction == 'RIGHT':
             self.position += self.right * velocity
-        if direction == "UP":
+        if direction == 'UP':
             self.position += self.world_up * velocity
-        if direction == "DOWN":
+        if direction == 'DOWN':
             self.position -= self.world_up * velocity
 
     def process_mouse_movement(self, x_offset, y_offset, constrain_pitch=True):

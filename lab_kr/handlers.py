@@ -3,6 +3,7 @@ from typing import List
 import glm
 from OpenGL.GLUT import glutLeaveMainLoop
 from OpenGL.raw.GLUT import glutWarpPointer
+
 from lab_kr.camera import Camera
 from lab_kr.particles.emitter import Emitter
 

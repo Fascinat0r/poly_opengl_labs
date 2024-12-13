@@ -1,5 +1,6 @@
 # material.py
 import OpenGL.GL as gl
+
 from lab_kr.materials.shader import Shader
 
 
@@ -26,17 +27,17 @@ class Material:
 
     def apply(self, shader: Shader):
         """Применение материала к шейдеру."""
-        shader.set_vec3("material.ambient", self.ambient)
-        shader.set_vec3("material.diffuse", self.diffuse)
-        shader.set_vec3("material.specular", self.specular)
-        shader.set_float("material.shininess", self.shininess)
+        shader.set_vec3('material.ambient', self.ambient)
+        shader.set_vec3('material.diffuse', self.diffuse)
+        shader.set_vec3('material.specular', self.specular)
+        shader.set_float('material.shininess', self.shininess)
 
         if self.texture:
-            shader.set_int("diffuseTexture", 0)
+            shader.set_int('diffuseTexture', 0)
             gl.glActiveTexture(gl.GL_TEXTURE0)
             gl.glBindTexture(gl.GL_TEXTURE_2D, self.texture)
         else:
-            shader.set_int("diffuseTexture", 0)
+            shader.set_int('diffuseTexture', 0)
             gl.glBindTexture(gl.GL_TEXTURE_2D, 0)  # Отключаем текстуру
 
     def cleanup(self, shader: Shader):
