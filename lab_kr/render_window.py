@@ -86,14 +86,7 @@ class RenderWindow:
         # Обновляем анимации
         self.scene.update_animations()
 
-        # Включаем смешивание для прозрачности
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        # Рисуем оси координат и сетку
-        self.scene.draw_grid()
-        self.scene.draw_axes()
-
-        # Depth Pass (Создание карты теней)
+        # Первый проход с перспективы света для составления карты глубины для теней
         self.scene.render_depth_map(self.depth_shader)
 
         # Render Pass (Рендер объектов сцены)
