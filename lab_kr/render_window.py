@@ -69,6 +69,7 @@ class RenderWindow:
         self.height = height if height != 0 else self.height
 
         aspect_ratio = self.width / self.height if height > 0 else 1.0
+        self.scene.camera.aspect_ratio = aspect_ratio
 
         glViewport(0, 0, self.width, self.height)
         glMatrixMode(GL_PROJECTION)
