@@ -56,7 +56,6 @@ class RenderWindow:
     def update(self, value):
         handle_camera_movement(self.scene.camera)  # Обновляем позицию камеры
         reset_mouse_position(self.width, self.height)  # Возвращаем мышь в центр экрана
-        handle_camera_movement(self.scene.camera)  # Обновляем позицию камеры
         glutPostRedisplay()
         glutTimerFunc(16, self.update, 0)
 
