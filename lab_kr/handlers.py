@@ -45,6 +45,9 @@ def key_released(key, x, y):
     """Обработка отпусканий клавиш."""
     global keys
     keycode = ord(key)
+    if keycode == 27:  # ESC
+        glutLeaveMainLoop()
+        return
     if keycode in keys:
         keys[keycode] = False
 
