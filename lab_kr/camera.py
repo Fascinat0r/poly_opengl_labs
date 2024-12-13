@@ -5,7 +5,7 @@ import glm
 
 
 class Camera:
-    def __init__(self, position, up, yaw, pitch, zoom=45.0, aspect_ratio=4/3):
+    def __init__(self, position, up, yaw, pitch, aspect_ratio, zoom=45.0):
         self.position = glm.vec3(*position)  # Позиция камеры
         self.up = glm.vec3(*up)  # Вектор "вверх"
         self.front = glm.vec3(0.0, 0.0, -1.0)  # Вектор, куда направлена камера (по умолчанию)
