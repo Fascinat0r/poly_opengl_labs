@@ -31,8 +31,8 @@ class Scene:
         # Время последней отрисовки сцены
         self.last_update_time = glutGet(GLUT_ELAPSED_TIME)
 
-        # Настраиваем темную сцену
-        glClearColor(0.0, 0.0, 0.0, 1.0)  # Фоновый черный цвет
+        # Настраиваем задний фон как небо
+        glClearColor(135.0 / 255.0, 206.0 / 255.0, 235.0 / 255.0, 1.0)  # Фоновый голубой цвет
 
         # Создаем карту глубины для теней
         self.depth_map = DepthMap()
@@ -50,55 +50,6 @@ class Scene:
     def add_object(self, obj):
         """Добавляем объекты (кубы, конусы и т.д.) в сцену."""
         self.objects.append(obj)
-
-    def draw_axes(self):
-        """Отрисовка осей координат."""
-        glBegin(GL_LINES)
-
-        # Оси
-        glColor3f(1, 0, 0)  # Ось X
-        glVertex3f(-10.0, 0.0, 0.0)
-        glVertex3f(10.0, 0.0, 0.0)
-
-        glColor3f(0, 1, 0)  # Ось Y
-        glVertex3f(0.0, -10.0, 0.0)
-        glVertex3f(0.0, 10.0, 0.0)
-
-        glColor3f(0, 0, 1)  # Ось Z
-        glVertex3f(0.0, 0.0, -10.0)
-        glVertex3f(0.0, 0.0, 10.0)
-
-        glEnd()
-
-    def draw_grid(self):
-        """Отрисовка сетки."""
-        glColor3f(0.5, 0.5, 0.5)
-        glBegin(GL_LINES)
-
-        for i in range(-10, 11):
-            glVertex3f(i, 0, -10)
-            glVertex3f(i, 0, 10)
-            glVertex3f(-10, 0, i)
-            glVertex3f(10, 0, i)
-
-        glEnd()
-
-    def sort_objects(self):
-        """Разделяет объекты на непрозрачные и прозрачные и сортирует прозрачные по расстоянию до камеры."""
-        opaque_objects = [obj for obj in self.objects if not obj.material.transparent]
-        transparent_objects = [obj for obj in self.objects if obj.material.transparent]
-
-        # Сортируем прозрачные объекты по убыванию расстояния до камеры
-        transparent_objects.sort(key=lambda obj: -self.distance_to_camera(obj.position))
-
-        return opaque_objects, transparent_objects
-
-    def distance_to_camera(self, position):
-        """Вычисляет расстояние от позиции до камеры."""
-        cam_pos = self.camera.position
-        return sqrt((position[0] - cam_pos.x) ** 2 +
-                    (position[1] - cam_pos.y) ** 2 +
-                    (position[2] - cam_pos.z) ** 2)
 
     def get_delta_time(self):
         current_time = glutGet(GLUT_ELAPSED_TIME)
