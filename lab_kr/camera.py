@@ -5,7 +5,7 @@ import glm
 
 
 class Camera:
-    def __init__(self, position, up, yaw, pitch, zoom=45.0, aspect_ratio=4/3):
+    def __init__(self, position, up, yaw, pitch, aspect_ratio, zoom=45.0):
         self.position = glm.vec3(*position)  # Позиция камеры
         self.up = glm.vec3(*up)  # Вектор "вверх"
         self.front = glm.vec3(0.0, 0.0, -1.0)  # Вектор, куда направлена камера (по умолчанию)
@@ -34,17 +34,17 @@ class Camera:
     def process_keyboard(self, direction, delta_time):
         """Обрабатывает ввод с клавиатуры для перемещения камеры."""
         velocity = self.speed * delta_time
-        if direction == "FORWARD":
+        if direction == 'FORWARD':
             self.position += self.front * velocity
-        if direction == "BACKWARD":
+        if direction == 'BACKWARD':
             self.position -= self.front * velocity
-        if direction == "LEFT":
+        if direction == 'LEFT':
             self.position -= self.right * velocity
-        if direction == "RIGHT":
+        if direction == 'RIGHT':
             self.position += self.right * velocity
-        if direction == "UP":
+        if direction == 'UP':
             self.position += self.world_up * velocity
-        if direction == "DOWN":
+        if direction == 'DOWN':
             self.position -= self.world_up * velocity
 
     def process_mouse_movement(self, x_offset, y_offset, constrain_pitch=True):
@@ -57,21 +57,13 @@ class Camera:
 
         # Ограничение наклона камеры
         if constrain_pitch:
-            if self.pitch > 89.0:
-                self.pitch = 89.0
-            if self.pitch < -89.0:
-                self.pitch = -89.0
+            if self.pitch >= 90.0:
+                self.pitch = 90.0
+            if self.pitch <= -90.0:
+                self.pitch = -90.0
 
         # Обновляем векторы камеры
         self.update_camera_vectors()
-
-    def process_mouse_scroll(self, y_offset):
-        """Обрабатывает прокрутку мыши для изменения угла обзора."""
-        self.zoom -= y_offset
-        if self.zoom < 1.0:
-            self.zoom = 1.0
-        if self.zoom > self.max_zoom:
-            self.zoom = self.max_zoom
 
     def update_camera_vectors(self):
         """Обновляет векторы front, right и up камеры."""

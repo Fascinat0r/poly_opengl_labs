@@ -1,6 +1,5 @@
 # shader.py
 import glm
-
 import OpenGL.GL as gl
 
 
@@ -16,20 +15,20 @@ class Shader:
         vertex_shader = gl.glCreateShader(gl.GL_VERTEX_SHADER)
         gl.glShaderSource(vertex_shader, vertex_source)
         gl.glCompileShader(vertex_shader)
-        self._check_compile_errors(vertex_shader, "VERTEX")
+        self._check_compile_errors(vertex_shader, 'VERTEX')
 
         # Создание и компиляция фрагментного шейдера
         fragment_shader = gl.glCreateShader(gl.GL_FRAGMENT_SHADER)
         gl.glShaderSource(fragment_shader, fragment_source)
         gl.glCompileShader(fragment_shader)
-        self._check_compile_errors(fragment_shader, "FRAGMENT")
+        self._check_compile_errors(fragment_shader, 'FRAGMENT')
 
         # Создание шейдерной программы и связывание шейдеров
         self._program = gl.glCreateProgram()
         gl.glAttachShader(self._program, vertex_shader)
         gl.glAttachShader(self._program, fragment_shader)
         gl.glLinkProgram(self._program)
-        self._check_compile_errors(self._program, "PROGRAM")
+        self._check_compile_errors(self._program, 'PROGRAM')
 
         # Удаление шейдеров после связывания
         gl.glDeleteShader(vertex_shader)
@@ -85,13 +84,13 @@ class Shader:
 
     @staticmethod
     def _check_compile_errors(shader, shader_type):
-        if shader_type != "PROGRAM":
+        if shader_type != 'PROGRAM':
             success = gl.glGetShaderiv(shader, gl.GL_COMPILE_STATUS)
             if not success:
                 info_log = gl.glGetShaderInfoLog(shader)
-                raise Exception(f"ERROR::SHADER_COMPILATION_ERROR of type: {shader_type}\n{info_log.decode()}")
+                raise Exception(f'ERROR::SHADER_COMPILATION_ERROR of type: {shader_type}\n{info_log.decode()}')
         else:
             success = gl.glGetProgramiv(shader, gl.GL_LINK_STATUS)
             if not success:
                 info_log = gl.glGetProgramInfoLog(shader)
-                raise Exception(f"ERROR::PROGRAM_LINKING_ERROR of type: {shader_type}\n{info_log.decode()}")
+                raise Exception(f'ERROR::PROGRAM_LINKING_ERROR of type: {shader_type}\n{info_log.decode()}')

@@ -1,8 +1,8 @@
 import math
 
 import glm
-
 from OpenGL.GL import *
+
 from lab_kr.shapes.shape import Shape
 
 

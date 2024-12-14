@@ -19,7 +19,7 @@ class DirectionalLight:
 
     def apply(self, shader: Shader):
         """Передача параметров направленного света в шейдер."""
-        shader.set_vec3("dirLight.direction", self.direction)
-        shader.set_vec3("dirLight.ambient", self.ambient)
-        shader.set_vec3("dirLight.diffuse", self.diffuse)
-        shader.set_vec3("dirLight.specular", self.specular)
+        shader.set_vec3('dirLight.direction', self.direction)
+        shader.set_vec3('dirLight.ambient', self.ambient)
+        shader.set_vec3('dirLight.diffuse', self.diffuse)
+        shader.set_vec3('dirLight.specular', self.specular)

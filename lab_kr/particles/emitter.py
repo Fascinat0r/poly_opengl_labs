@@ -9,16 +9,21 @@ from lab_kr.particles.particle import Particle
 
 
 class Emitter(ABC):
-    def __init__(self, position, emission_rate, max_particles):
+    def __init__(self, position, emission_rate, max_particles, transparency_radius=None, acceleration=None):
         self.position = glm.vec3(*position)
         self.emission_rate = emission_rate  # Частота эмиссии (частиц в секунду)
         self.max_particles = max_particles
         self.particles: List[Particle] = []
         self.accumulator = 0.0  # Накопитель времени
+        self.transparency_radius = transparency_radius
+        self.acceleration = [0.0, -9.81, 0.0] if acceleration is None else acceleration
 
     @abstractmethod
     def emit_particle(self):
         pass
+
+    def set_transparency_radius(self, transparency_radius):
+        self.transparency_radius = transparency_radius if transparency_radius >= 0.0 else 0.0
 
     def update(self, delta_time):
         # Эмиссия новых частиц
@@ -34,7 +39,7 @@ class Emitter(ABC):
         # Обновление существующих частиц
         alive_particles = []
         for particle in self.particles:
-            particle.update(delta_time)
+            particle.update(delta_time, self.acceleration)
             if particle.is_alive():
                 alive_particles.append(particle)
         self.particles = alive_particles
