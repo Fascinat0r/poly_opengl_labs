@@ -12,7 +12,7 @@ class Particle:
         self.position = glm.vec3(*position)
         self.velocity = glm.vec3(*velocity)
         self.size = size
-        # Нормализуем цвет, если он задан в диапазоне [0, 255]
+        # Нормализованный цвет
         self.color = glm.vec4(color[0], color[1], color[2], color[3])
         self.lifetime = lifetime
         self.age = 0.0
