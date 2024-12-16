@@ -22,10 +22,10 @@ class Particle:
         self.trail = Trail(self.position, 16) if self.has_trail else None
 
     def update(self, delta_time, acceleration):
+        # Обновляем позицию и находим новую скорость
+        self.position += self.velocity * delta_time + glm.vec3(*acceleration) * (delta_time ** 2) / 2
         self.velocity += glm.vec3(*acceleration) * delta_time
 
-        # Обновляем позицию
-        self.position += self.velocity * delta_time
         self.age += delta_time
 
         # Обновляем след, если он есть
