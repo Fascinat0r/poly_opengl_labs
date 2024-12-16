@@ -23,7 +23,5 @@ class ParticleSystem:
                 self.anti_attractor_handler.apply_anti_attraction(particle)
 
     def render(self, shader: Shader):
-        shader.set_bool('useParticleColor', True)
         for emitter in self.emitters:
             emitter.render(shader)
-        shader.set_bool('useParticleColor', False)

@@ -12,7 +12,7 @@ class Particle:
         self.position = glm.vec3(*position)
         self.velocity = glm.vec3(*velocity)
         self.size = size
-        # Нормализуем цвет, если он задан в диапазоне [0, 255]
+        # Нормализованный цвет
         self.color = glm.vec4(color[0], color[1], color[2], color[3])
         self.lifetime = lifetime
         self.age = 0.0
@@ -22,10 +22,10 @@ class Particle:
         self.trail = Trail(self.position, 16) if self.has_trail else None
 
     def update(self, delta_time, acceleration):
+        # Обновляем позицию и находим новую скорость
+        self.position += self.velocity * delta_time + glm.vec3(*acceleration) * (delta_time ** 2) / 2
         self.velocity += glm.vec3(*acceleration) * delta_time
 
-        # Обновляем позицию
-        self.position += self.velocity * delta_time
         self.age += delta_time
 
         # Обновляем след, если он есть

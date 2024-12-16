@@ -21,60 +21,25 @@ class AntiAttractorHandler:
         """Обрабатывает взаимодействие частицы с анти-аттракторами."""
         for obj in self.objects:
             if isinstance(obj, Cylinder):
-                if self.is_within_range_cylinder(particle.position, obj):
-                    self.apply_force_cylinder(particle, obj)
-
-    def is_within_range_cylinder(self, position: glm.vec3, cylinder: Cylinder):
-        """Проверяет, находится ли частица в зоне действия цилиндра с учётом его поворота и радиусов оснований."""
-        # Матрицы поворота
-        rot_x = glm.rotate(glm.mat4(1.0), glm.radians(cylinder.rotation[0]), glm.vec3(1, 0, 0))
-        rot_y = glm.rotate(glm.mat4(1.0), glm.radians(cylinder.rotation[1]), glm.vec3(0, 1, 0))
-        rot_z = glm.rotate(glm.mat4(1.0), glm.radians(cylinder.rotation[2]), glm.vec3(0, 0, 1))
-
-        # Итоговая матрица поворота
-        rotation_matrix = rot_z * rot_y * rot_x
-
-        # Преобразуем позицию частицы в локальную систему координат цилиндра
-        inv_rotation_matrix = glm.inverse(rotation_matrix)
-        local_position = glm.vec3(inv_rotation_matrix * glm.vec4(position - cylinder.position, 1.0))
-
-        # Вектор от основания цилиндра к частице в локальной системе координат
-        to_particle = local_position - glm.vec3(0, 0, 0)
-
-        # Проекция частицы на ось цилиндра (вдоль локальной Y)
-        projected_y = glm.dot(to_particle, glm.vec3(0, 1, 0))  # Скалярное произведение
-        clamped_y = glm.clamp(projected_y, 0, cylinder.height)  # Ограничиваем проекцию высотой цилиндра
-
-        # Находим радиус цилиндра на высоте проекции
-        current_radius = glm.mix(cylinder.base_radius, cylinder.top_radius, clamped_y / cylinder.height)
-
-        # Находим ближайшую точку на оси цилиндра
-        closest_point = glm.vec3(0, clamped_y, 0)
-
-        # Расстояние от частицы до ближайшей точки на оси цилиндра
-        distance_to_axis = glm.length(local_position - closest_point)
-
-        # Проверяем, находится ли частица в зоне действия
-        return distance_to_axis <= current_radius + self.range_of_effect
+                self.apply_force_cylinder(particle, obj)
 
     def apply_force_cylinder(self, particle: Particle, cylinder: Cylinder):
-        """Применяет силу отталкивания от поверхности цилиндра."""
+        """Применяет силу отталкивания от поверхности цилиндра, если частица находится в радиусе действия эффекта."""
         # Матрицы поворота цилиндра
         rotation_matrix = glm.mat4(1.0)
-        rotation_matrix = glm.rotate(rotation_matrix, glm.radians(cylinder.rotation[0]), glm.vec3(1, 0, 0))
-        rotation_matrix = glm.rotate(rotation_matrix, glm.radians(cylinder.rotation[1]), glm.vec3(0, 1, 0))
-        rotation_matrix = glm.rotate(rotation_matrix, glm.radians(cylinder.rotation[2]), glm.vec3(0, 0, 1))
+        rotation_matrix = glm.rotate(rotation_matrix, glm.radians(cylinder.rotation[0]), glm.vec3(1.0, 0.0, 0.0))
+        rotation_matrix = glm.rotate(rotation_matrix, glm.radians(cylinder.rotation[1]), glm.vec3(0.0, 1.0, 0.0))
+        rotation_matrix = glm.rotate(rotation_matrix, glm.radians(cylinder.rotation[2]), glm.vec3(0.0, 0.0, 1.0))
 
         # Переход частицы в локальную систему цилиндра
         inv_rotation_matrix = glm.inverse(rotation_matrix)
         local_particle_position = glm.vec3(inv_rotation_matrix * glm.vec4(particle.position - cylinder.position, 1.0))
 
         # Определяем проекцию частицы на ось цилиндра
-        projection_y = glm.clamp(local_particle_position.y, 0, cylinder.height)
-        projected_point = glm.vec3(0, projection_y, 0)
+        clamped_y = glm.clamp(local_particle_position.y, 0.0, cylinder.height)
 
         # Радиус цилиндра на высоте проекции
-        current_radius = glm.mix(cylinder.base_radius, cylinder.top_radius, projection_y / cylinder.height)
+        current_radius = glm.mix(cylinder.base_radius, cylinder.top_radius, clamped_y / cylinder.height)
 
         # Расстояние от частицы до боковой поверхности
         to_axis = glm.vec2(local_particle_position.x, local_particle_position.z)
@@ -82,21 +47,33 @@ class AntiAttractorHandler:
 
         # Расстояние до верхнего и нижнего оснований
         distance_to_top = local_particle_position.y - cylinder.height
-        distance_to_bottom = local_particle_position.y
+        distance_to_bottom = -local_particle_position.y
 
         # Определяем минимальное расстояние до поверхности цилиндра
         if local_particle_position.y > cylinder.height:
-            # Частица над верхним основанием
-            distance_to_surface = distance_to_top
-            surface_normal = glm.vec3(0, 1, 0)
-        elif local_particle_position.y < 0:
-            # Частица под нижним основанием
-            distance_to_surface = distance_to_bottom
-            surface_normal = glm.vec3(0, -1, 0)
+            # Частица [...] над верхним основанием
+            if distance_to_side_surface > 0.0:
+                # где-то сбоку
+                distance_to_surface = glm.length(glm.vec2(distance_to_side_surface, distance_to_top))
+                surface_normal = glm.vec3(to_axis.x, 1.0, to_axis.y)
+            else:
+                # ровно
+                distance_to_surface = distance_to_top
+                surface_normal = glm.vec3(0.0, 1.0, 0.0)
+        elif local_particle_position.y < 0.0:
+            # Частица [...] под нижним основанием
+            if distance_to_side_surface > 0.0:
+                # где-то сбоку
+                distance_to_surface = glm.length(glm.vec2(distance_to_side_surface, distance_to_bottom))
+                surface_normal = glm.vec3(to_axis.x, -1.0, to_axis.y)
+            else:
+                # ровно
+                distance_to_surface = distance_to_bottom
+                surface_normal = glm.vec3(0.0, -1.0, 0.0)
         else:
-            # Частица сбоку
+            # Частица где-то сбоку
             distance_to_surface = distance_to_side_surface
-            surface_normal = glm.normalize(glm.vec3(to_axis.x, 0, to_axis.y))
+            surface_normal = glm.vec3(to_axis.x, 0.0, to_axis.y)
 
         # Проверяем, находится ли частица в зоне действия эффекта
         if abs(distance_to_surface) > self.range_of_effect:

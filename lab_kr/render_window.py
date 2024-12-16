@@ -92,7 +92,10 @@ class RenderWindow:
         self.scene.render_scene(self.shader)
 
         # Рендеринг частиц
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glDepthMask(GL_FALSE)  # Отключаем запись в буфер глубины для частиц
+
         self.particle_shader.use()
         self.particle_shader.set_mat4('projection', self.scene.camera.get_projection_matrix())
         self.particle_shader.set_mat4('view', self.scene.camera.get_view_matrix())

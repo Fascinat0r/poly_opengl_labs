@@ -68,7 +68,7 @@ def main():
     scene.initialize_particle_system(range_of_effect=1.0)
     # Эмиттер – точка со случайным направлением испускания частиц
     point_emitter = PointEmitter(
-        position=[3.5, 4.0, 0.0],
+        position=[2.5, 4.0, 2.5],
         emission_rate=100,
         max_particles=1000,
         speed_range=(6.0, 8.0),
