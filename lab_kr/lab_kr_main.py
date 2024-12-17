@@ -23,7 +23,7 @@ def main():
     scene.set_camera(camera)
 
     # Загрузка текстур
-    texture = ImageTexture("../data/textures/kanye.png")
+    texture = ImageTexture("../data/textures/wool.jpg")
     texture.load()
 
     texture_cobblestone = ImageTexture("../data/textures/bandera.jpg")
